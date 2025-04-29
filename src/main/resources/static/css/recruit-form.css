@@ -1,0 +1,74 @@
+/* 모집글 작성 폼 커스텀 스타일 */
+.recruit-form-container {
+  max-width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  padding: 2.5rem 2rem 2rem 2rem;
+}
+
+.image-upload-box {
+  width: 100%;
+  min-height: 140px;
+  background: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+.image-upload-box:hover {
+  border: 2px solid #2563eb;
+}
+.image-placeholder {
+  color: #bdbdbd;
+  font-size: 2.5rem;
+}
+
+.tech-badge {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #2563eb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  font-size: 0.97rem;
+  padding: 0.35em 0.9em;
+  margin: 0 0.2em 0.3em 0;
+  font-weight: 500;
+}
+
+.form-label.fw-semibold {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+textarea.form-control,
+input.form-control {
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 1rem;
+}
+
+textarea.form-control:focus,
+input.form-control:focus {
+  border: 2px solid #2563eb;
+  background: #fff;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: #2563eb;
+  border: none;
+}
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 768px) {
+  .recruit-form-container {
+    padding: 1.2rem 0.5rem;
+  }
+  .image-upload-box {
+    min-height: 100px;
+  }
+}

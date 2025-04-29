@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모집글 작성</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/common/style.css" />
+    <link rel="stylesheet" href="/css/common/recruit-form.css" />
+  </head>
+  <body>
+    <div th:replace="~{common/navbar :: navbar}"></div>
+
+    <div class="container recruit-form-container my-5">
+      <h2 class="fw-bold mb-3">모집글 작성</h2>
+      <div class="mb-4 text-muted">
+        프로젝트에 적합한 팀원을 찾기 위한 모집글을 작성해보세요.
+      </div>
+      <form>
+        <!-- 프로젝트 카테고리 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">프로젝트 카테고리</label>
+          <div class="d-flex flex-wrap gap-2">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="category"
+                id="side"
+                checked
+              />
+              <label class="form-check-label" for="side">사이드프로젝트</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="category"
+                id="hackathon"
+              />
+              <label class="form-check-label" for="hackathon">해커톤</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="category"
+                id="contest"
+              />
+              <label class="form-check-label" for="contest">공모전</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="category"
+                id="study"
+              />
+              <label class="form-check-label" for="study">스터디</label>
+            </div>
+          </div>
+        </div>
+        <!-- 프로젝트 제목 -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">프로젝트 제목</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="프로젝트 제목을 입력하세요"
+          />
+        </div>
+        <!-- 프로젝트 설명 -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">프로젝트 설명</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            placeholder="프로젝트에 대해 설명해주세요"
+          ></textarea>
+        </div>
+        <!-- 대표 이미지 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">대표 이미지</label>
+          <div
+            class="image-upload-box d-flex align-items-center justify-content-center"
+          >
+            <input type="file" class="form-control d-none" id="mainImage" />
+            <label
+              for="mainImage"
+              class="w-100 h-100 d-flex flex-column align-items-center justify-content-center cursor-pointer"
+            >
+              <span class="image-placeholder"
+                ><i class="bi bi-image" style="font-size: 2rem"></i
+              ></span>
+              <span class="text-muted small">이미지 업로드</span>
+            </label>
+          </div>
+        </div>
+        <!-- 기술 스택 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">기술 스택</label>
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="기술 스택을 입력하세요 (예: React, Spring, ...)"
+          />
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge tech-badge">React</span>
+            <span class="badge tech-badge">Spring</span>
+            <span class="badge tech-badge">Node.js</span>
+            <span class="badge tech-badge">Python</span>
+            <span class="badge tech-badge">TypeScript</span>
+            <span class="badge tech-badge">Kotlin</span>
+          </div>
+        </div>
+        <!-- 프로젝트 진행 방식 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">프로젝트 진행 방식</label>
+          <div class="d-flex gap-3">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="meetingType"
+                id="online"
+                checked
+              />
+              <label class="form-check-label" for="online">온라인</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="meetingType"
+                id="offline"
+              />
+              <label class="form-check-label" for="offline">오프라인</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="meetingType"
+                id="hybrid"
+              />
+              <label class="form-check-label" for="hybrid">혼합</label>
+            </div>
+          </div>
+        </div>
+        <!-- 모집 인원 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">모집 인원</label>
+          <input
+            type="number"
+            class="form-control w-25"
+            min="1"
+            max="20"
+            placeholder="예: 4"
+          />
+        </div>
+        <!-- 원하는 성향 및 우대사항 -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">원하는 성향 및 우대사항</label>
+          <textarea
+            class="form-control"
+            rows="2"
+            placeholder="예: 소통이 활발한 분, 협업 경험이 있는 분 등"
+          ></textarea>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary px-5">
+            모집글 등록
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div th:replace="~{common/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

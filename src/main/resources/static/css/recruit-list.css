@@ -1,0 +1,74 @@
+/* 모집글 목록 페이지 커스텀 스타일 */
+.filter-sidebar {
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  min-width: 220px;
+}
+
+.filter-sidebar h6 {
+  font-size: 1.05rem;
+  color: #2563eb;
+}
+
+.tech-badge {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #2563eb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  padding: 0.35em 0.9em;
+  margin: 0 0.2em 0.3em 0;
+  font-weight: 500;
+}
+
+.tech-badge.selected,
+.tech-badge:hover {
+  background: #2563eb;
+  color: #fff;
+  border: 1.5px solid #2563eb;
+  cursor: pointer;
+}
+
+.recruit-card {
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  border: none;
+  transition: box-shadow 0.2s;
+}
+.recruit-card:hover {
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.1);
+}
+.recruit-thumb {
+  border-radius: 12px 12px 0 0;
+  height: 160px;
+  object-fit: cover;
+}
+
+.card-title {
+  font-size: 1.08rem;
+}
+
+.card-text.text-truncate {
+  font-size: 0.97rem;
+  color: #6b7280;
+}
+
+.pagination .page-link {
+  color: #2563eb;
+  border-radius: 8px;
+  margin: 0 2px;
+}
+.pagination .page-item.active .page-link {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+}
+
+@media (max-width: 992px) {
+  .filter-sidebar {
+    min-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+}

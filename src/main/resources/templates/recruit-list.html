@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모집글 목록</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/common/style.css" />
+    <link rel="stylesheet" href="/css/common/recruit-list.css" />
+  </head>
+  <body>
+    <div th:replace="~{common/navbar :: navbar}"></div>
+
+    <div class="container-fluid bg-light py-4 min-vh-100">
+      <div class="container">
+        <div class="row">
+          <!-- 사이드바 -->
+          <aside class="col-lg-3 mb-4">
+            <div class="card p-3 mb-3 filter-sidebar">
+              <h6 class="fw-bold mb-3">카테고리</h6>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="cat1" />
+                <label class="form-check-label" for="cat1"
+                  >사이드프로젝트</label
+                >
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="cat2" />
+                <label class="form-check-label" for="cat2">공모전</label>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="cat3" />
+                <label class="form-check-label" for="cat3">스터디</label>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="cat4" />
+                <label class="form-check-label" for="cat4">해커톤</label>
+              </div>
+
+              <h6 class="fw-bold mt-4 mb-2">기술 스택</h6>
+              <input
+                type="text"
+                class="form-control mb-2"
+                placeholder="기술 스택 검색"
+              />
+              <div class="mb-3">
+                <span class="badge tech-badge">Java</span>
+                <span class="badge tech-badge">Python</span>
+                <span class="badge tech-badge">JavaScript</span>
+                <span class="badge tech-badge">React</span>
+                <span class="badge tech-badge">Node.js</span>
+                <span class="badge tech-badge">Spring</span>
+                <span class="badge tech-badge">TypeScript</span>
+                <span class="badge tech-badge">C++</span>
+                <span class="badge tech-badge">Kotlin</span>
+              </div>
+
+              <h6 class="fw-bold mt-4 mb-2">모집 여부</h6>
+              <div class="form-check mb-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="status"
+                  id="recruiting"
+                  checked
+                />
+                <label class="form-check-label" for="recruiting">모집중</label>
+              </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="status"
+                  id="closed"
+                />
+                <label class="form-check-label" for="closed">모집 완료</label>
+              </div>
+
+              <h6 class="fw-bold mt-4 mb-2">모임 방식</h6>
+              <div class="form-check mb-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="meetingType"
+                  id="online"
+                />
+                <label class="form-check-label" for="online">온라인</label>
+              </div>
+              <div class="form-check mb-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="meetingType"
+                  id="offline"
+                />
+                <label class="form-check-label" for="offline">오프라인</label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="meetingType"
+                  id="hybrid"
+                />
+                <label class="form-check-label" for="hybrid">혼합</label>
+              </div>
+            </div>
+          </aside>
+          <!-- 메인 컨텐츠 -->
+          <main class="col-lg-9">
+            <div
+              class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2"
+            >
+              <div class="flex-grow-1 me-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="프로젝트/기술 스택 검색"
+                />
+              </div>
+              <select class="form-select w-auto">
+                <option>최신순</option>
+                <option>조회순</option>
+                <option>댓글순</option>
+              </select>
+              <a href="/recruit-form" class="btn btn-primary ms-2"
+                >+ 모집글 작성</a
+              >
+            </div>
+            <div class="mb-2 text-muted">
+              모집글 목록<br /><span class="small"
+                >다양한 프로젝트가 당신을 기다립니다.</span
+              >
+            </div>
+            <div class="row g-4">
+              <!-- 모집글 카드 예시 (반복) -->
+              <div class="col-md-6 col-xl-4">
+                <div class="card recruit-card h-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+                    class="card-img-top recruit-thumb"
+                    alt="썸네일"
+                  />
+                  <div class="card-body">
+                    <h6 class="card-title fw-bold mb-1">
+                      웹 기반 협업 툴 개발
+                    </h6>
+                    <div class="mb-2">
+                      <span class="badge tech-badge">React</span>
+                      <span class="badge tech-badge">TypeScript</span>
+                      <span class="badge tech-badge">Node.js</span>
+                    </div>
+                    <p class="card-text text-truncate">
+                      실시간 협업이 가능한 웹 기반 툴을 개발하는 프로젝트입니다.
+                      프론트엔드/백엔드/디자이너 모집중!
+                    </p>
+                  </div>
+                  <div
+                    class="card-footer d-flex justify-content-between align-items-center bg-white border-0"
+                  >
+                    <span class="small text-muted"
+                      ><i class="bi bi-eye"></i> 34</span
+                    >
+                    <span class="small text-muted"
+                      ><i class="bi bi-person"></i> 모집중 2/3</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-4">
+                <div class="card recruit-card h-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
+                    class="card-img-top recruit-thumb"
+                    alt="썸네일"
+                  />
+                  <div class="card-body">
+                    <h6 class="card-title fw-bold mb-1">
+                      캡스톤 모바일 앱 개발
+                    </h6>
+                    <div class="mb-2">
+                      <span class="badge tech-badge">Kotlin</span>
+                      <span class="badge tech-badge">Firebase</span>
+                    </div>
+                    <p class="card-text text-truncate">
+                      안드로이드/IOS 앱 개발자를 모집합니다. 캡스톤 프로젝트
+                      경험자 우대!
+                    </p>
+                  </div>
+                  <div
+                    class="card-footer d-flex justify-content-between align-items-center bg-white border-0"
+                  >
+                    <span class="small text-muted"
+                      ><i class="bi bi-eye"></i> 19</span
+                    >
+                    <span class="small text-muted"
+                      ><i class="bi bi-person"></i> 모집중 1/2</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-4">
+                <div class="card recruit-card h-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                    class="card-img-top recruit-thumb"
+                    alt="썸네일"
+                  />
+                  <div class="card-body">
+                    <h6 class="card-title fw-bold mb-1">
+                      AI 기반 추천 시스템 개발
+                    </h6>
+                    <div class="mb-2">
+                      <span class="badge tech-badge">Python</span>
+                      <span class="badge tech-badge">TensorFlow</span>
+                      <span class="badge tech-badge">AWS</span>
+                    </div>
+                    <p class="card-text text-truncate">
+                      AI 추천 시스템을 개발할 팀원을 찾습니다. 데이터 분석
+                      경험자 환영!
+                    </p>
+                  </div>
+                  <div
+                    class="card-footer d-flex justify-content-between align-items-center bg-white border-0"
+                  >
+                    <span class="small text-muted"
+                      ><i class="bi bi-eye"></i> 21</span
+                    >
+                    <span class="small text-muted"
+                      ><i class="bi bi-person"></i> 모집중 3/4</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 페이지네이션 -->
+            <nav class="d-flex justify-content-center mt-4">
+              <ul class="pagination">
+                <li class="page-item disabled"><a class="page-link">‹</a></li>
+                <li class="page-item active"><a class="page-link">1</a></li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item"><a class="page-link">3</a></li>
+                <li class="page-item"><a class="page-link">›</a></li>
+              </ul>
+            </nav>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{common/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

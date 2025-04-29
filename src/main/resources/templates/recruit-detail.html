@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모집글 상세</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/common/style.css" />
+    <link rel="stylesheet" href="/css/common/recruit-detail.css" />
+  </head>
+  <body>
+    <div th:replace="~{common/navbar :: navbar}"></div>
+
+    <div class="container recruit-detail-container my-5">
+      <div class="card p-4 mb-4">
+        <div
+          class="d-flex flex-column flex-md-row align-items-md-center mb-3 gap-4"
+        >
+          <div class="flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+              class="rounded-3 recruit-detail-thumb"
+              alt="대표 이미지"
+              width="10%"
+            />
+          </div>
+          <div class="flex-grow-1">
+            <h2 class="fw-bold mb-1">웹 기반 협업 툴 개발</h2>
+            <div class="mb-2 text-muted small">
+              작성일: 2025-04-28 · 모집 D-14 · 조회 238회
+            </div>
+            <div class="mb-2">
+              <span class="badge tech-badge">React</span>
+              <span class="badge tech-badge">TypeScript</span>
+              <span class="badge tech-badge">Node.js</span>
+            </div>
+            <span class="badge bg-primary-subtle text-primary">모집중</span>
+          </div>
+        </div>
+        <hr />
+        <h5 class="fw-semibold mb-2">프로젝트 소개</h5>
+        <p class="mb-4">
+          실시간 협업이 가능한 웹 기반 툴을 개발하는 프로젝트입니다. 팀 프로젝트
+          관리와 의사소통을 효율적으로 할 수 있는 서비스 개발이 목표입니다.
+        </p>
+        <h6 class="fw-semibold mb-2">주요 기능</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">실시간 협업 문서 편집</div>
+              <div class="text-muted small">
+                여러 팀원이 동시에 문서를 편집할 수 있습니다.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">프로젝트 일정 및 태스크 관리</div>
+              <div class="text-muted small">
+                일정/태스크를 한눈에 관리할 수 있습니다.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">커뮤니케이션 채널</div>
+              <div class="text-muted small">
+                채팅, 알림 등 팀 커뮤니케이션 기능 제공
+              </div>
+            </div>
+          </div>
+        </div>
+        <h6 class="fw-semibold mb-2">우대사항</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">실시간 협업 툴 개발 경험</div>
+              <div class="text-muted small">
+                WebSocket, WebRTC 등 실시간 통신 경험 우대
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">UI/UX 이해도</div>
+              <div class="text-muted small">
+                사용자 중심의 UI/UX 설계 경험 우대
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="feature-box">
+              <div class="fw-bold mb-1">실시간 데이터 처리 경험</div>
+              <div class="text-muted small">
+                대용량 데이터 실시간 처리 경험 우대
+              </div>
+            </div>
+          </div>
+        </div>
+        <h6 class="fw-semibold mb-2">모집 정보</h6>
+        <div class="row mb-3">
+          <div class="col-md-3 col-6 mb-2">
+            <div class="text-muted small">모집 마감일</div>
+            <div>2025-05-12</div>
+          </div>
+          <div class="col-md-3 col-6 mb-2">
+            <div class="text-muted small">진행 방식</div>
+            <div>온라인</div>
+          </div>
+          <div class="col-md-3 col-6 mb-2">
+            <div class="text-muted small">모집 인원</div>
+            <div>4명</div>
+          </div>
+          <div class="col-md-3 col-6 mb-2">
+            <div class="text-muted small">지원자 수</div>
+            <div>2명</div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <button class="btn btn-primary px-4">지원하기</button>
+          <button class="btn btn-outline-secondary px-4">문의하기</button>
+        </div>
+      </div>
+      <!-- 댓글/대댓글 영역 -->
+      <div class="card p-4 mb-5">
+        <h6 class="fw-bold mb-3">댓글</h6>
+        <!-- 댓글 입력창 -->
+        <form class="mb-4">
+          <div class="d-flex gap-2 align-items-start">
+          <textarea
+                  class="form-control"
+                  rows="2"
+                  placeholder="댓글을 입력하세요"
+          ></textarea>
+            <button type="submit" class="btn btn-primary">등록</button>
+          </div>
+        </form>
+        <!-- 댓글 목록 예시 -->
+        <div class="mb-3">
+          <div class="d-flex align-items-start gap-2 mb-1">
+            <div class="fw-semibold">홍길동</div>
+            <div class="text-muted small">2025-05-01</div>
+          </div>
+          <div class="mb-2">프로젝트가 정말 흥미로워 보여요! 지원했습니다.</div>
+          <button
+                  class="btn btn-link btn-sm p-0 text-primary"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#reply1"
+          >
+            답글
+          </button>
+          <!-- 대댓글 입력창 (토글) -->
+          <div class="collapse mt-2" id="reply1">
+            <form class="d-flex gap-2 align-items-start">
+            <textarea
+                    class="form-control"
+                    rows="1"
+                    placeholder="답글을 입력하세요"
+            ></textarea>
+              <button type="submit" class="btn btn-outline-primary btn-sm">
+                등록
+              </button>
+            </form>
+          </div>
+          <!-- 대댓글 목록 예시 -->
+          <div class="mt-2 ms-4">
+            <div class="d-flex align-items-start gap-2 mb-1">
+              <div class="fw-semibold">운영자</div>
+              <div class="text-muted small">2025-05-01</div>
+            </div>
+            <div class="mb-2">감사합니다! 곧 연락드릴게요.</div>
+          </div>
+        </div>
+        <hr />
+        <div class="mb-3">
+          <div class="d-flex align-items-start gap-2 mb-1">
+            <div class="fw-semibold">김지원</div>
+            <div class="text-muted small">2025-05-02</div>
+          </div>
+          <div class="mb-2">
+            질문이 있습니다. 진행 방식은 온라인만 가능한가요?
+          </div>
+          <button
+                  class="btn btn-link btn-sm p-0 text-primary"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#reply2"
+          >
+            답글
+          </button>
+          <div class="collapse mt-2" id="reply2">
+            <form class="d-flex gap-2 align-items-start">
+            <textarea
+                    class="form-control"
+                    rows="1"
+                    placeholder="답글을 입력하세요"
+            ></textarea>
+              <button type="submit" class="btn btn-outline-primary btn-sm">
+                등록
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div th:replace="~{common/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
