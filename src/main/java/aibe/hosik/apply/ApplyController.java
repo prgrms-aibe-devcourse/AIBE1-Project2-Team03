@@ -19,7 +19,7 @@ public class ApplyController {
    * 예시 요청:
    * POST /api/applies
    * {
-   * "userId": 1,
+   * "userId": 1 ,
    * "postId": 2,
    * "resumeId": 3
    * }
