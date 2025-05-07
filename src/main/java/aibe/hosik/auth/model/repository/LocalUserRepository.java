@@ -1,6 +1,6 @@
-package aibe.hosik.model.repository;
+package aibe.hosik.auth.model.repository;
 
-import aibe.hosik.model.entity.LocalUser;
+import aibe.hosik.auth.model.entity.LocalUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
