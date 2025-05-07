@@ -1,5 +1,6 @@
-package aibe.hosik.skill;
+package aibe.hosik.apply.controller;
 
+import aibe.hosik.apply.service.ApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/skills")
+@RequestMapping("/api/applies")
 @RequiredArgsConstructor
-public class SkillController {
-  private final SkillService skillService;
+public class ApplyController {
+  private final ApplyService applyService;
 }
