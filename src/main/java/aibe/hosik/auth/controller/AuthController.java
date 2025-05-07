@@ -44,7 +44,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
             Authentication auth = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+                    new UsernamePasswordAuthenticationToken(req.username(), req.password())
             );
             String token = jwtProvider.generateToken(auth);
 
@@ -70,4 +70,3 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 }
-

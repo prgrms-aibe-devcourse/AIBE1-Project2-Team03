@@ -1,8 +1,6 @@
 package aibe.hosik.auth.model.repository;
 
 import aibe.hosik.auth.model.entity.LocalUser;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +14,6 @@ public interface LocalUserRepository extends JpaRepository<LocalUser, Long> {
 
     Optional<LocalUser> findByUsername(String username);
 
-    Optional<Object> findByEmail(@Email(message = "유효한 이메일 형식이어야 합니다.") @NotBlank(message = "이메일은 필수 입력값입니다.") String email);
+    /** 비밀번호 변경·로그인 시 이메일로 사용자 조회 */
+    Optional<LocalUser> findByEmail(String email);
 }
