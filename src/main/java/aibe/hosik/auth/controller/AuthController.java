@@ -33,7 +33,6 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest req) {
-        // Call the register method on the unified UserService
         userService.register(req);
         return ResponseEntity.ok("회원가입 완료");
     }
@@ -68,9 +67,7 @@ public class AuthController {
      */
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req) {
-        public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req,
-        @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails principal) {
-        userService.changePassword(principal.getUsername(), req);
+        userService.changePassword(req);
         return ResponseEntity.noContent().build();
     }
 }
