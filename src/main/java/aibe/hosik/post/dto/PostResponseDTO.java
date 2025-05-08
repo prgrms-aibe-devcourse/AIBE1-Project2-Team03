@@ -10,6 +10,7 @@ public record PostResponseDTO(
         String title,
         String content,
         String category,
+        String type,
         List<String> skills,
         Integer headCount,
         Integer currentCount
@@ -21,6 +22,7 @@ public record PostResponseDTO(
                 post.getTitle(),
                 post.getContent(),
                 post.getCategory().toString(),
+                post.getType().toString(),
                 skills,
                 post.getHeadCount(),
                 currentCount
