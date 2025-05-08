@@ -32,8 +32,8 @@ public class Apply extends TimeEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Resume resume;
 
-  @Column
-  private Long userId;
+//  @Column
+//  private Long userId;
   
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;

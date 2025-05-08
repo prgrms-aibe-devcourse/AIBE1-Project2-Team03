@@ -1,5 +1,8 @@
 package aibe.hosik.user;
 
+import aibe.hosik.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +14,7 @@ import java.util.Collections;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-@Table(name = "users")
+// @Table(name = "users")
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +35,12 @@ public class User implements UserDetails {
   private SocialType socialType;
   @Column(nullable = true, unique = true)
   private String socialId;
+
+  // User와 양방향
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+  @JsonIgnore
+  private Profile profile;
+  
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Collections.singleton(new SimpleGrantedAuthority(this.roles.name()));
