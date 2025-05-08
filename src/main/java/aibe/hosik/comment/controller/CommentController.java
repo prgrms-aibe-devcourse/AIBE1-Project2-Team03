@@ -6,6 +6,7 @@ import aibe.hosik.comment.entity.Comment;
 import aibe.hosik.comment.service.CommentService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,9 +26,13 @@ import java.util.List;
 public class CommentController {
   private final CommentService commentService;
 
+  @SecurityRequirement(name = "JWT")
   @Operation(summary="댓글 등록", description="댓글 및 대댓글을 등록합니다.")
   @PostMapping
   public ResponseEntity<?> createComment(@RequestBody CommentRequestDTO dto, @AuthenticationPrincipal User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
     commentService.createComment(dto, user);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -38,18 +44,26 @@ public class CommentController {
     return ResponseEntity.ok(comments);
   }
 
+  @SecurityRequirement(name = "JWT")
   @Operation(summary="댓글 삭제", description="댓글을 삭제합니다.")
   @DeleteMapping("/{commentId}")
   public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
     commentService.deleteComment(commentId, user);
     return ResponseEntity.noContent().build();
   }
 
+  @SecurityRequirement(name = "JWT")
   @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
   @PatchMapping("/{commentId}")
   public ResponseEntity<?> updateComment(@PathVariable Long commentId,
                                          @RequestBody CommentRequestDTO dto,
                                          @AuthenticationPrincipal User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
     commentService.updateComment(commentId, dto, user);
     return ResponseEntity.ok().build();
   }
