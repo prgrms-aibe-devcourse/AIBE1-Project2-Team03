@@ -1,16 +1,33 @@
-name: EC2 배포
-
-# develop 또는 feat/#34 브랜치에 push될 때 실행
 on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ develop ]
+
   push:
-    branches:
-      - "develop"
+    branches: [ develop ]
 
 jobs:
-  deploy:
-    name: Build & Deploy to EC2
+  build-on-pr:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    name: Build only (PR 생성 중)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+  deploy-on-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Build & Deploy (PR merge)
     steps:
       # GitHub repository 코드 체크아웃
       - name: Checkout code
