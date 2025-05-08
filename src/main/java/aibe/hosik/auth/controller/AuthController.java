@@ -68,7 +68,9 @@ public class AuthController {
      */
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req) {
-        userService.changePassword(req);
+        public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req,
+        @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails principal) {
+        userService.changePassword(principal.getUsername(), req);
         return ResponseEntity.noContent().build();
     }
 }
