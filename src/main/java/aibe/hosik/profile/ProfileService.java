@@ -80,7 +80,7 @@ public class ProfileService {
 
     profile.setIntroduction(introduction);
     if (imageUrl != null && !imageUrl.isBlank()) {
-      profile.setImageUrl(imageUrl);
+      profile.setImage(imageUrl);
     }
 
     return profileRepository.save(profile);
@@ -96,10 +96,10 @@ public class ProfileService {
 
     if (imageFile != null && !imageFile.isEmpty()) {
       // 기존 이미지가 있다면 삭제
-      if (profile.getImageUrl() != null && !profile.getImageUrl().isEmpty()
-              && !profile.getImageUrl().contains("default")) {
+      if (profile.getImage() != null && !profile.getImage().isEmpty()
+              && !profile.getImage().contains("default")) {
         try {
-          Path oldFilePath = Paths.get(uploadDir + profile.getImageUrl().substring(profile.getImageUrl().lastIndexOf('/') + 1));
+          Path oldFilePath = Paths.get(uploadDir + profile.getImage().substring(profile.getImage().lastIndexOf('/') + 1));
           Files.deleteIfExists(oldFilePath);
         } catch (IOException e) {
           log.error("Error deleting old profile image: {}", e.getMessage());
@@ -114,7 +114,7 @@ public class ProfileService {
 
       // 이미지 URL 업데이트
       String imageUrl = "/uploads/" + fileName;
-      profile.setImageUrl(imageUrl);
+      profile.setImage(imageUrl);
 
       return profileRepository.save(profile);
     }
@@ -130,7 +130,7 @@ public class ProfileService {
     log.info("Creating profile for user: {}", user.getEmail());
     Profile profile = new Profile();
     profile.setUser(user);
-    profile.setImageUrl("/images/default-profile.png"); // 기본 프로필 이미지
+    profile.setImage("/images/default-profile.png"); // 기본 프로필 이미지
 
     return profileRepository.save(profile);
   }
@@ -155,7 +155,7 @@ public class ProfileService {
             .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다: " + reviewId));
 
     // 삭제 권한 확인
-    Profile targetProfile = review.getTargetUser().getProfile();
+    Profile targetProfile = review.getReviewee().getProfile();
     if (!targetProfile.canDeleteReview(review, currentUserId)) {
       throw new IllegalArgumentException("리뷰를 삭제할 권한이 없습니다.");
     }

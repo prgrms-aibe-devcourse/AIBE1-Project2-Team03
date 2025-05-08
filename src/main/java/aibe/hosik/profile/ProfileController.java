@@ -133,7 +133,7 @@ public class ProfileController {
 
     try {
       String introduction = profileData.get("introduction");
-      String imageUrl = profileData.get("imageUrl");
+      String imageUrl = profileData.get("image");
 
       Profile updatedProfile = profileService.updateProfile(user.getId(), introduction, imageUrl);
       log.info("Updated profile for user: {}", email);
@@ -158,7 +158,7 @@ public class ProfileController {
     try {
       Profile updatedProfile = profileService.updateProfileImage(user.getId(), imageFile);
       log.info("Updated profile image for user: {}", email);
-      return ResponseEntity.ok(Map.of("imageUrl", updatedProfile.getImageUrl()));
+      return ResponseEntity.ok(Map.of("image", updatedProfile.getImage()));
     } catch (IOException e) {
       log.error("Error uploading profile image for user {}: {}", email, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));

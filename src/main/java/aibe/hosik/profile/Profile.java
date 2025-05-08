@@ -28,8 +28,11 @@ public class Profile {
   @Column(name = "introduction")
   private String introduction;
 
-  @Column(name = "image_url")
-  private String imageUrl;
+  @Column(name = "image")
+  private String image;
+
+  @Column(name = "nickname")
+  private String nickname;
 
   // 대표 자기소개서 관계 추가
   // Resume 엔티티에서 is_main 필드로 대표 자기소개서 판단
@@ -37,7 +40,7 @@ public class Profile {
   private List<Resume> resumes = new ArrayList<>();
 
   // 리뷰 관리를 위한 관계 추가
-  @OneToMany(mappedBy = "targetUser", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "reviewee", fetch = FetchType.LAZY)
   private List<Review> receivedReviews = new ArrayList<>();
 
   // 프로필 조회 시 대표 자기소개서 가져오는 편의 메서드
@@ -61,6 +64,6 @@ public class Profile {
     }
 
     // 2. 타인의 프로필에서는 자신이 작성한 리뷰만 삭제 가능
-    return review.getAuthor().getId().equals(currentUserId);
+    return review.getReviewer().getId().equals(currentUserId);
   }
 }
