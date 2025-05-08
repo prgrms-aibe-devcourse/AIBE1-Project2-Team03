@@ -70,8 +70,8 @@ jobs:
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
           KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
-          GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID=${{ secrets.CLIENT_GITHUB_ID }}
+          GITHUB_CLIENT_SECRET=${{ secrets.CLIENT_GITHUB_SECRET }}
           STORAGE_URL=${{ secrets.STORAGE_URL }}
           STORAGE_BUCKET_NAME=${{ secrets.STORAGE_BUCKET_NAME }}
           STORAGE_KEY=${{ secrets.STORAGE_KEY }}
