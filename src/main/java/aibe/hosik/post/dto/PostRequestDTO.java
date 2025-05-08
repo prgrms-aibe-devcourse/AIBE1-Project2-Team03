@@ -12,7 +12,6 @@ public record PostRequestDTO(
         String title,
         String content,
         Integer headCount,
-        String image,
         String requirementPersonality,
         LocalDate endedAt,
 
@@ -21,12 +20,12 @@ public record PostRequestDTO(
 
         List<String> skills
 ) {
-    public Post toEntity(User user) {
+    public Post toEntity(User user, String imageUrl) {
         return Post.builder()
                 .title(title())
                 .content(content())
                 .headCount(headCount())
-                .image(image())
+                .image(imageUrl)
                 .requirementPersonality(requirementPersonality())
                 .endedAt(endedAt())
                 .category(category())

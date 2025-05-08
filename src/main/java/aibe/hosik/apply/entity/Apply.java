@@ -3,6 +3,7 @@ package aibe.hosik.apply.entity;
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.resume.Resume;
+import aibe.hosik.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,4 +34,7 @@ public class Apply extends TimeEntity {
 
   @Column
   private Long userId;
+  
+  @ManyToOne(fetch = FetchType.LAZY)
+  private User user;
 }

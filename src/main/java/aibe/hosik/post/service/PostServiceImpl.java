@@ -1,17 +1,22 @@
 package aibe.hosik.post.service;
 
+import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
+import aibe.hosik.profile.Profile;
 import aibe.hosik.skill.repository.PostSkillRepository;
 import aibe.hosik.skill.repository.SkillRepository;
 import aibe.hosik.skill.entity.PostSkill;
 import aibe.hosik.skill.entity.Skill;
 import aibe.hosik.user.User;
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -24,6 +29,8 @@ public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final SkillRepository skillRepository;
   private final PostSkillRepository postSkillRepository;
+  private final StorageService storageService;
+  private final ApplyRepository applyRepository;
 
   /**
    * 모든 게시글을 조회하는 메서드입니다.
@@ -42,8 +49,7 @@ public class PostServiceImpl implements PostService {
                       .map(s -> s.getSkill().getName())
                       .collect(Collectors.toList());
 
-              // TODO : 현재 참여자 수 계산
-              Integer currentCount = 0;
+              int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
 
               // DTO 정적 팩토리 메서드 활용
               return PostResponseDTO.from(post, skills, currentCount);
@@ -51,17 +57,28 @@ public class PostServiceImpl implements PostService {
   }
 
   /**
-   * 게시글을 생성하고 저장하는 메서드입니다.
+   * 새로운 게시글을 생성하고 저장하는 메서드입니다.
    *
-   * @param dto  게시글 생성에 필요한 정보를 담고 있는 PostRequestDTO 객체
-   * @param user 게시글 생성 요청을 보낸 사용자 객체
-   * @return 저장된 게시글 객체
+   * @param dto 게시글 생성을 위한 요청 데이터를 담은 DTO
+   * @param image 게시글 이미지 파일 (선택 사항)
+   * @param user 게시글 작성자 정보
+   * @return 생성된 게시글 정보와 관련 데이터가 담긴 응답 DTO
+   * @throws RuntimeException 이미지 업로드 실패 시 발생하는 예외
    */
   @Override
   @Transactional
-  public PostResponseDTO createPost(PostRequestDTO dto, User user) {
+  public PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user) {
+    String imageUrl = null;
+    if (image != null && !image.isEmpty()) {
+      try {
+        imageUrl = storageService.upload(image); // Supabase에 업로드 후 URL 획득
+      } catch (Exception e) {
+        throw new RuntimeException("이미지 업로드 실패", e);
+      }
+    }
+
     // toEntity 사용해서 Post 객체 생성
-    Post post = dto.toEntity(user);
+    Post post = dto.toEntity(user, imageUrl);
     // 생성한 객체 Post 저장
     Post savePost = postRepository.save(post);
     
@@ -82,7 +99,8 @@ public class PostServiceImpl implements PostService {
       // 응답 DTO 스킬 저장
       skills.add(skill.getName());
     }
-    // TODO: 참여자 수 계산 로직 필요
+    
+    // 추후 Apply > is_selected 될 때 변경
     int currentCount = 0;
     return PostResponseDTO.from(savePost, skills, currentCount);
   }
@@ -105,10 +123,10 @@ public class PostServiceImpl implements PostService {
             .collect(Collectors.toList());
 
     // 매칭 사용자 정보 조회
-    // TODO : 실제 매칭된 사용자 조회
-    List<MatchedUserDTO> matchedUsers = new ArrayList<>();
+    List<MatchedUserDTO> matchedUsers = findMatchedUsers(postId);
+    int currentCount = matchedUsers.size();
 
-    return PostDetailDTO.from(post,skills, matchedUsers);
+    return PostDetailDTO.from(post,skills, matchedUsers, currentCount);
   }
 
   /**
@@ -128,13 +146,33 @@ public class PostServiceImpl implements PostService {
     postRepository.delete(post);
   }
 
+  /**
+   * 주어진 게시글 ID와 수정 데이터를 기반으로 게시글을 업데이트합니다.
+   *
+   * @param postId 업데이트할 게시글의 ID
+   * @param dto 수정할 게시글 데이터를 포함하는 객체
+   * @param image 게시글과 함께 업로드할 이미지 파일
+   * @param user 요청을 보낸 사용자 객체
+   * @return 수정된 게시글 정보를 포함하는 PostResponseDTO 객체
+   * @throws ResponseStatusException 작성자가 아닌 사용자가 요청한 경우 FORBIDDEN 상태 코드 예외를 발생시킴
+   * @throws RuntimeException 이미지 업로드 실패 시 발생
+   */
   @Override
   @Transactional
-  public PostResponseDTO updatePost(Long postId, PostPatchDTO dto, User user) {
+  public PostResponseDTO updatePost(Long postId, PostPatchDTO dto, MultipartFile image, User user) {
     Post post = postRepository.findById(postId)
             .orElseThrow();
     if(!post.getUser().getId().equals(user.getId())){
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 삭제할 수 있습니다");
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 수정할 수 있습니다");
+    }
+
+    if (image != null && !image.isEmpty()) {
+      try {
+        String imageUrl = storageService.upload(image);
+        post.setImage(imageUrl);
+      } catch (Exception e) {
+        throw new RuntimeException("이미지 업로드 실패", e);
+      }
     }
 
     // 엔티티 메서드 이용해서 수정
@@ -163,8 +201,26 @@ public class PostServiceImpl implements PostService {
               .collect(Collectors.toList());
     }
 
-    // TODO: 참여자 수 계산 로직 필요
-    int currentCount = 0;
+    // 수정 X
+    int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(postId);
     return PostResponseDTO.from(post, skills, currentCount);
+  }
+
+  // 현재 매칭된 사람 정보 조회
+  private List<MatchedUserDTO> findMatchedUsers(Long postId) {
+    List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId);
+
+    return applies.stream()
+            .map(apply -> {
+              User user = apply.getUser();
+              Profile profile = user.getProfile();
+
+              return new MatchedUserDTO(
+                      user.getId(),
+                      profile.getNickname(),
+                      profile.getImage(),
+                      profile.getIntroduction()
+              );
+            }).toList();
   }
 }

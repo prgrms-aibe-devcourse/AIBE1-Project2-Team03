@@ -10,6 +10,7 @@ import aibe.hosik.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class PostFacade {
     private final PostService postService;
     private final PostSkillRepository postSkillRepository;
 
-    public PostResponseDTO createPost(PostRequestDTO dto, User user) {
-        return postService.createPost(dto, user);
+    public PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user) {
+        return postService.createPost(dto, image, user);
     }
 
     public List<PostResponseDTO> getAllPosts() {
@@ -35,7 +36,7 @@ public class PostFacade {
         postService.deletePost(postId, user);
     }
 
-    public PostResponseDTO updatePost(Long postId, PostPatchDTO dto, User user) {
-        return postService.updatePost(postId, dto, user);
+    public PostResponseDTO updatePost(Long postId, PostPatchDTO dto, MultipartFile image, User user) {
+        return postService.updatePost(postId, dto, image, user);
     }
 }
