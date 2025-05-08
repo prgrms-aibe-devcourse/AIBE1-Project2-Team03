@@ -35,14 +35,15 @@ public class PostController {
 
   @SecurityRequirement(name = "JWT")
   @Operation(summary="모집글 등록", description="모집글을 등록합니다.")
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> createPost(@RequestPart("dto") PostRequestDTO dto,
-                                      @RequestPart(value="image") MultipartFile image,
+                                      @RequestPart(value="image", required = false) MultipartFile image,
                                       @AuthenticationPrincipal User user){
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
     PostResponseDTO responseDTO = postFacade.createPost(dto, image, user);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
   }
 
   @Operation(summary="모집글 조회", description = "모집글 목록을 조회합니다.")
@@ -57,6 +58,7 @@ public class PostController {
     return ResponseEntity.ok(postFacade.getPostDetail(postId));
   }
 
+  @SecurityRequirement(name = "JWT")
   @Operation(summary="모집글 삭제", description ="작성자는 모집글을 삭제합니다")
   @DeleteMapping("/{postId}")
   public ResponseEntity<?> deletePost(@PathVariable Long postId, @AuthenticationPrincipal User user){
@@ -64,8 +66,9 @@ public class PostController {
     return ResponseEntity.noContent().build();
   }
 
+  @SecurityRequirement(name = "JWT")
   @Operation(summary="모집글 수정", description="모집글을 수정합니다.")
-  @PatchMapping("/{postId}")
+  @PatchMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> updatePost(@PathVariable Long postId,
                                       @RequestPart("dto") PostPatchDTO dto,
                                       @RequestPart(value="image") MultipartFile image,
