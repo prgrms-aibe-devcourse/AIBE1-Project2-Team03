@@ -1,4 +1,4 @@
-package aibe.hosik.auth.model.entity;
+package aibe.hosik.user;
 
 /**
  * 사용자 권한(Role) 정의
