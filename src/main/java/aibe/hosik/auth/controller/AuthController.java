@@ -33,7 +33,6 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest req) {
-        // Call the register method on the unified UserService
         userService.register(req);
         return ResponseEntity.ok("회원가입 완료");
     }
@@ -66,7 +65,7 @@ public class AuthController {
      * 3) 비밀번호 변경
      * PATCH /auth/password
      */
-     @PatchMapping("/password")
+    @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req) {
         userService.changePassword(req);
         return ResponseEntity.noContent().build();
