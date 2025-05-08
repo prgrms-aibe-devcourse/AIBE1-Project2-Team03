@@ -3,6 +3,7 @@ package aibe.hosik.auth.service;
 import aibe.hosik.auth.dto.SignUpRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
 import aibe.hosik.auth.model.entity.LocalUser;
+import aibe.hosik.auth.model.entity.Role;
 import aibe.hosik.auth.model.repository.LocalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,17 +20,22 @@ public class LocalUserService {
     /** 회원가입 */
     @Transactional
     public void register(SignUpRequest req) {
+        // 이미 사용 중인 아이디 또는 이메일인지 확인
         userRepository.findByUsername(req.username())
                 .ifPresent(u -> { throw new IllegalArgumentException("이미 사용 중인 아이디입니다."); });
         userRepository.findByEmail(req.email())
                 .ifPresent(u -> { throw new IllegalArgumentException("이미 사용 중인 이메일입니다."); });
 
+        // LocalUser 객체 생성 및 필드 설정
         LocalUser user = LocalUser.builder()
                 .username(req.username())
                 .password(passwordEncoder.encode(req.password()))
                 .email(req.email())
+                .name(req.name())
+                .roles(Role.USER)
                 .build();
 
+        // 사용자 정보 저장
         userRepository.save(user);
     }
 
