@@ -51,6 +51,12 @@ dependencies {
 
 }
 
+// bootjar build
+processResources {
+	exclude '**/application-dev.yml'
+}
+
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

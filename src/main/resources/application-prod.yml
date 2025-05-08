@@ -1,13 +1,18 @@
 server:
   port: 8080
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   security:
     oauth2:
       client:
         registration:
           kakao:
-            client-id:
-            client-secret:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
@@ -15,8 +20,8 @@ spring:
               - profile_nickname
              # - account_email
           github:
-            client-id:
-            client-secret:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/github"
             scope:
@@ -35,12 +40,12 @@ spring:
             user-name-attribute: id
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
-    username:
-    password:
+    url: ${DB_URL}
+    username: ${DB_NAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         show_sql: true
@@ -50,12 +55,12 @@ springdoc:
   api-docs:
     enabled: true
 jwt:
-  secret:
+  secret: ${JWT_SECRET}
   expiration-ms: 3600000  # 1시간
 front-end:
   redirect: http://localhost:3000/oauth2/redirect
 
 supabase:
-  url: ${storage_url}
-  bucket-name: ${bucket_name}
-  access-key: ${anon_key}
+  url: ${STORAGE_URL}
+  bucket-name: ${STORAGE_BUCKET_NAME}
+  access-key: ${STORAGE_KEY}

@@ -38,3 +38,6 @@ out/
 
 ### dev ###
 *-dev.yml
+
+### env
+.env

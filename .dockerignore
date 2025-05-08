@@ -1,0 +1,17 @@
+.env
+**/application-dev.yml
+**/*.pem
+
+# 빌드 제외
+.gradle
+build/
+!build/libs/
+!build/libs/*.jar
+target/
+out/
+
+*.log
+*.iml
+.idea/
+.DS_Store
+node_modules/

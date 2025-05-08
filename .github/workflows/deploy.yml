@@ -1,0 +1,98 @@
+name: EC2 배포
+
+# develop 또는 feat/#34 브랜치에 push될 때 실행
+on:
+  push:
+    branches:
+      - "develop"
+      - "feat/#34"
+
+jobs:
+  deploy:
+    name: Build & Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      # GitHub repository 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Docker Buildx 설정 (고급 캐시 지원용)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Docker Hub 로그인
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 이미지 태그 자동 설정
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: hosiki/teamo
+          tags: |
+            type=sha,format=short
+            type=ref,event=branch
+            latest
+
+      # Docker 이미지 빌드 + Docker Hub로 푸시
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .                          # 현재 디렉토리 기준 빌드
+          push: true                          # Docker Hub로 push
+          tags: ${{ steps.meta.outputs.tags }} # 위에서 설정한 태그 사용
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=hosiki/teamo:buildcache
+          cache-to: type=registry,ref=hosiki/teamo:buildcache,mode=max
+
+      # EC2 SSH 접속을 위한 private key 등록
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # EC2에 .env 파일 생성 (GitHub Secrets 기반)
+      - name: Generate .env and deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << EOF
+          mkdir -p ~/teamo
+
+          cat > ~/teamo/.env <<EOL
+          SPRING_PROFILES_ACTIVE=prod
+          DB_URL=${{ secrets.DB_URL }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}
+          STORAGE_URL=${{ secrets.STORAGE_URL }}
+          STORAGE_BUCKET_NAME=${{ secrets.STORAGE_BUCKET_NAME }}
+          STORAGE_KEY=${{ secrets.STORAGE_KEY }}
+          FRONT_END_REDIRECT=${{ secrets.FRONT_END_REDIRECT }}
+          EOL
+          EOF
+
+      # EC2에서 컨테이너 재시작: stop → rm → pull → run
+      - name: Deploy container to EC2
+        env:
+          DOCKER_TAG: ${{ github.sha }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << EOF
+
+          if docker ps -a | grep -q teamo; then
+            docker stop teamo
+            docker rm teamo
+          fi
+          
+          docker pull hosiki/teamo:${DOCKER_TAG}
+          docker run --env-file ~/teamo/.env -d -p 8080:8080 --name teamo hosiki/teamo:${DOCKER_TAG}
+          
+          docker image prune -f
+          EOF
