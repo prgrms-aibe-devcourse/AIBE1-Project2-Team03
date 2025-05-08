@@ -4,7 +4,8 @@ import aibe.hosik.auth.JwtTokenProvider;
 import aibe.hosik.auth.dto.LoginRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
 import aibe.hosik.auth.dto.SignUpRequest;
-import aibe.hosik.auth.service.LocalUserService;
+import aibe.hosik.user.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final LocalUserService userService;
+    private final UserService userService;
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtProvider;
 
@@ -32,6 +33,7 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest req) {
+        // Call the register method on the unified UserService
         userService.register(req);
         return ResponseEntity.ok("회원가입 완료");
     }
@@ -66,7 +68,9 @@ public class AuthController {
      */
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req) {
-        userService.changePassword(req);
+        public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req,
+        @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails principal) {
+        userService.changePassword(principal.getUsername(), req);
         return ResponseEntity.noContent().build();
     }
 }

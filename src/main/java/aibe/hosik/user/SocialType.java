@@ -1,4 +1,4 @@
-package aibe.hosik.auth.model.entity;
+package aibe.hosik.user;
 
 public enum SocialType {
     KAKAO,

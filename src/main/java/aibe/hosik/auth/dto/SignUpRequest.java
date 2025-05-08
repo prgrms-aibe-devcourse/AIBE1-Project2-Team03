@@ -15,5 +15,9 @@ public record SignUpRequest(
 
         @Email(message = "유효한 이메일 형식이어야 합니다.")
         @NotBlank(message = "이메일은 필수 입력값입니다.")
-        String email
+        String email,
+
+
+        @NotBlank(message = "이름은 필수 입력값입니다.")
+        String name
 ) {}

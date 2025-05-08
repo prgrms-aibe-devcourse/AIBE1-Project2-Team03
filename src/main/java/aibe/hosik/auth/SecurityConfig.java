@@ -1,6 +1,6 @@
 package aibe.hosik.auth;
 
-import aibe.hosik.auth.model.entity.SocialType;
+import aibe.hosik.user.SocialType;
 import aibe.hosik.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
