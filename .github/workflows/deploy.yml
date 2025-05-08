@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - "develop"
-      - "feat/#34"
+      - "feat/#35"
 
 jobs:
   deploy:
@@ -50,17 +50,15 @@ jobs:
         with:
           images: hosiki/teamo
           tags: |
-            type=sha,format=short
-            type=ref,event=branch
             latest
 
       # Docker 이미지 빌드 + Docker Hub로 푸시
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .                          # 현재 디렉토리 기준 빌드
-          push: true                          # Docker Hub로 push
-          tags: ${{ steps.meta.outputs.tags }} # 위에서 설정한 태그 사용
+          context: .
+          push: true
+          tags: hosiki/teamo:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=hosiki/teamo:buildcache
           cache-to: type=registry,ref=hosiki/teamo:buildcache,mode=max
@@ -96,8 +94,6 @@ jobs:
 
       # EC2에서 컨테이너 재시작: stop → rm → pull → run
       - name: Deploy container to EC2
-        env:
-          DOCKER_TAG: ${{ github.sha }}
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << EOF
 
@@ -105,9 +101,9 @@ jobs:
             docker stop teamo
             docker rm teamo
           fi
-          
-          docker pull hosiki/teamo:${DOCKER_TAG}
-          docker run --env-file ~/teamo/.env -d -p 8080:8080 --name teamo hosiki/teamo:${DOCKER_TAG}
-          
+
+          docker pull hosiki/teamo:latest
+          docker run --env-file ~/teamo/.env -d -p 8080:8080 --name teamo hosiki/teamo:latest
+
           docker image prune -f
           EOF
