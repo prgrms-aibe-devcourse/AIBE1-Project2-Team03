@@ -30,4 +30,8 @@ public class Comment extends TimeEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private Comment parentComment;
+
+  public void updateContent (String content) {
+    this.content = content;
+  }
 }
