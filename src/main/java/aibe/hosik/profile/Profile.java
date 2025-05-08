@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Entity
 @NoArgsConstructor
@@ -27,5 +28,7 @@ public class Profile {
   private String nickname;
 
   @OneToOne
+  @JoinColumn(name="user_id")
+  @JsonIgnore
   private User user;
 }
