@@ -78,7 +78,7 @@ jobs:
           cat > ~/teamo/.env <<EOL
           SPRING_PROFILES_ACTIVE=prod
           DB_URL=${{ secrets.DB_URL }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_USERNAME=${{ secrets.DB_NAME }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
