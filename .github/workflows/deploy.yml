@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - "develop"
-      - "feat/#35"
+      - "feat/#42"
 
 jobs:
   deploy:
