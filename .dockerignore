@@ -3,10 +3,10 @@
 **/*.pem
 
 # 빌드 제외
-.gradle
-build/
 !build/libs/
 !build/libs/*.jar
+.gradle
+build/
 target/
 out/
 
