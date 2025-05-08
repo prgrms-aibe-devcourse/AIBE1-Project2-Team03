@@ -16,6 +16,17 @@ jobs:
       # GitHub repository 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      # java build 추가
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'  
+          cache: gradle  
+          
+      - name: Build with Gradle
+        run: ./gradlew build
 
       # Docker Buildx 설정 (고급 캐시 지원용)
       - name: Set up Docker Buildx
