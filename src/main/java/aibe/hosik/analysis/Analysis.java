@@ -1,6 +1,6 @@
 package aibe.hosik.analysis;
 
-import aibe.hosik.apply.Apply;
+import aibe.hosik.apply.entity.Apply;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

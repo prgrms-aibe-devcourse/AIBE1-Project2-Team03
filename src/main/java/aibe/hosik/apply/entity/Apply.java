@@ -1,4 +1,4 @@
-package aibe.hosik.apply;
+package aibe.hosik.apply.entity;
 
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.post.entity.Post;

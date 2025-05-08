@@ -1,5 +1,7 @@
-package aibe.hosik.apply;
+package aibe.hosik.apply.controller;
 
+import aibe.hosik.apply.ApplyRequest;
+import aibe.hosik.apply.service.ApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

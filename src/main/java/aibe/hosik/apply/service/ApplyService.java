@@ -1,8 +1,10 @@
-package aibe.hosik.apply;
+package aibe.hosik.apply.service;
 
+import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
+import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.resume.Resume;
-import aibe.hosik.post.PostRepository;
 import aibe.hosik.resume.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
