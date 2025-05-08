@@ -99,4 +99,16 @@ public class CommentServiceImpl implements CommentService{
         }
         commentRepository.delete(comment);
     }
+
+    @Override
+    @Transactional
+    public void updateComment(Long commentId, CommentRequestDTO dto, User user) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow();
+
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 작성자만 수정할 수 있습니다");
+        }
+        comment.updateContent(dto.content());
+    }
 }
