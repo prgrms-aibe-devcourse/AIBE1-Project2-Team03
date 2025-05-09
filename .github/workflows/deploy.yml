@@ -5,9 +5,7 @@ on:
     branches: [ develop ]
 
   push:
-    branches:
-    - develop
-    - "feat/#48"
+    branches: [ develop ]
 
 jobs:
   build-on-pr:
