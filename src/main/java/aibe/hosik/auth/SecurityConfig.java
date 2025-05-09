@@ -66,12 +66,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/data/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                /*.formLogin(form -> form
-                        .loginProcessingUrl("/auth/login")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler(authSuccessHandler())
-                )*/
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login")
                         .userInfoEndpoint(userlnfo -> userlnfo
