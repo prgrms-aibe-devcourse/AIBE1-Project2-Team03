@@ -46,8 +46,8 @@ public class PostController {
           @RequestParam("headCount") Integer headCount,
           @RequestParam("requirementPersonality") String requirementPersonality,
           @RequestParam("endedAt") String endedAt,
-          @RequestParam("category") String category,
-          @RequestParam("type") String type,
+          @RequestParam("category") PostCategory postCategory,
+          @RequestParam("type") PostType postType,
           @RequestParam("skills") List<String> skills,
           @RequestParam(value = "image", required = false) MultipartFile image,
           @AuthenticationPrincipal User user) {
@@ -56,24 +56,7 @@ public class PostController {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
 
-    // String으로 받은 파라미터를 적절한 타입으로 변환
-    PostCategory postCategory;
-    PostType postType;
     LocalDate endDate;
-
-    try {
-      postCategory = PostCategory.valueOf(category);
-    } catch (IllegalArgumentException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "유효하지 않은 카테고리입니다. 사용 가능한 값: " + Arrays.toString(PostCategory.values()));
-    }
-
-    try {
-      postType = PostType.valueOf(type);
-    } catch (IllegalArgumentException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "유효하지 않은 타입입니다. 사용 가능한 값: " + Arrays.toString(PostType.values()));
-    }
 
     try {
       endDate = LocalDate.parse(endedAt);
@@ -123,9 +106,41 @@ public class PostController {
   @Operation(summary="모집글 수정", description="모집글을 수정합니다.")
   @PatchMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> updatePost(@PathVariable Long postId,
-                                      @RequestPart("dto") PostPatchDTO dto,
-                                      @RequestPart(value="image") MultipartFile image,
+                                      @RequestParam(value = "title", required = false) String title,
+                                      @RequestParam(value = "content", required = false) String content,
+                                      @RequestParam(value = "headCount", required = false) Integer headCount,
+                                      @RequestParam(value = "requirementPersonality", required = false) String requirementPersonality,
+                                      @RequestParam(value = "endedAt", required = false) String endedAt,
+                                      @RequestParam(value = "category", required = false) PostCategory postCategory,
+                                      @RequestParam(value = "type", required = false) PostType postType,
+                                      @RequestParam(value = "skills", required = false) List<String> skills,
+                                      @RequestParam(value = "image", required = false) MultipartFile image,
                                       @AuthenticationPrincipal User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
+
+    LocalDate endDate = null;
+    if (endedAt != null) {
+      try {
+        endDate = LocalDate.parse(endedAt);
+      } catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "날짜 형식이 잘못되었습니다. 형식: YYYY-MM-DD (예: 2025-12-31)");
+      }
+    }
+
+    PostPatchDTO dto = new PostPatchDTO(
+            title,
+            content,
+            headCount,
+            requirementPersonality,
+            endDate,
+            postCategory,
+            postType,
+            skills
+    );
+
     PostResponseDTO responseDTO = postFacade.updatePost(postId, dto, image, user);
     return ResponseEntity.ok(responseDTO);
   }

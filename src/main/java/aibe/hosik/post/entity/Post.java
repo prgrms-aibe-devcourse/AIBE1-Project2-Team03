@@ -65,7 +65,6 @@ public class Post extends TimeEntity {
   public void updatePatch(PostPatchDTO dto) {
     if (dto.title() != null) this.title = dto.title();
     if (dto.content() != null) this.content = dto.content();
-    if (dto.image() != null) this.image = dto.image();
     if (dto.requirementPersonality() != null) this.requirementPersonality = dto.requirementPersonality();
     if (dto.headCount() != null) this.headCount = dto.headCount();
     if (dto.endedAt() != null) this.endedAt = dto.endedAt();
