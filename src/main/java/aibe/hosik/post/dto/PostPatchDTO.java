@@ -10,7 +10,6 @@ public record PostPatchDTO(
         String title,
         String content,
         Integer headCount,
-        String image,
         String requirementPersonality,
         LocalDate endedAt,
 
