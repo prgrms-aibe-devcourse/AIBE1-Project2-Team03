@@ -5,7 +5,9 @@ on:
     branches: [ develop ]
 
   push:
-    branches: [ develop ]
+    branches:
+    - develop
+    - "feat/#48"
 
 jobs:
   build-on-pr:
@@ -140,7 +142,7 @@ jobs:
           mkdir -p ./nginx/www
           
           # 기존 컨테이너 중지
-          docker-compose down || true
+          docker rm -f teamo certbot || true
           
           # 최신 이미지 가져오기
           docker pull hosiki/teamo:latest
