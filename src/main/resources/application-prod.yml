@@ -65,6 +65,7 @@ supabase:
   bucket-name: ${STORAGE_BUCKET_NAME}
   access-key: ${STORAGE_KEY}
 
+#cors 설정
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
