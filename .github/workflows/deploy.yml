@@ -125,6 +125,7 @@ jobs:
           STORAGE_BUCKET_NAME=${{ secrets.STORAGE_BUCKET_NAME }}
           STORAGE_KEY=${{ secrets.STORAGE_KEY }}
           FRONT_END_REDIRECT=${{ secrets.FRONT_END_REDIRECT }}
+          APP_CORS_ALLOWED_ORIGINS=${{ secrets.APP_CORS_ALLOWED_ORIGINS }}
           EOL
           EOF
 
