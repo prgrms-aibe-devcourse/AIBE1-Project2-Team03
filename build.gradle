@@ -53,7 +53,7 @@ dependencies {
 
 // bootjar build
 processResources {
-	exclude '**/application-dev.yml'
+//	exclude '**/application-dev.yml'
 }
 
 
