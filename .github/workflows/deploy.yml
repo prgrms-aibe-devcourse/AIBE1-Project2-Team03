@@ -1,3 +1,4 @@
+name : TEAMO 서버 배포
 on:
   pull_request:
     types: [ opened, synchronize, reopened ]
@@ -17,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       # yml 권한 부여
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permigssion for gradlew
         run: chmod +x ./gradlew
 
       # java build 추가
@@ -43,15 +44,15 @@ jobs:
       # yml 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-        
+
       # java build 추가
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  
-          cache: gradle  
-          
+          distribution: 'temurin'
+          cache: gradle
+
       - name: Build with Gradle
         run: ./gradlew bootJar
 
@@ -92,6 +93,18 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
+      # 설정 파일 EC2로 복사
+      - name: Copy configuration files to EC2
+        run: |
+          # 저장소의 설정 파일들을 EC2로 복사
+          scp -o StrictHostKeyChecking=no docker-compose.yml ec2-user@${{ secrets.EC2_HOST }}:~/teamo/
+          
+          # nginx 설정 디렉토리 생성 확인
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "mkdir -p ~/teamo/nginx/conf.d"
+          
+          # nginx 설정 파일 복사
+          scp -o StrictHostKeyChecking=no -r app/nginx/conf.d/* ec2-user@${{ secrets.EC2_HOST }}:~/teamo/nginx/conf.d/
+
       # EC2에 .env 파일 생성 (GitHub Secrets 기반)
       - name: Generate .env and deploy to EC2
         run: |
@@ -115,18 +128,25 @@ jobs:
           EOL
           EOF
 
-      # EC2에서 컨테이너 재시작: stop → rm → pull → run
-      - name: Deploy container to EC2
+      # EC2에서 docker-compose로 서비스 재시작
+      - name: Deploy services to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << EOF
+          cd ~/teamo
 
-          if docker ps -a | grep -q teamo; then
-            docker stop teamo
-            docker rm teamo
-          fi
-
+          # 디렉토리 구조 확인
+          mkdir -p ./nginx/certbot
+          mkdir -p ./nginx/www
+          
+          # 기존 컨테이너 중지
+          docker-compose down || true
+          
+          # 최신 이미지 가져오기
           docker pull hosiki/teamo:latest
-          docker run --env-file ~/teamo/.env -d -p 8080:8080 --name teamo hosiki/teamo:latest
-
+          
+          # 서비스 시작
+          docker-compose up -d
+          
+          # 불필요한 이미지 정리
           docker image prune -f
           EOF
