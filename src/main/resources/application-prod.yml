@@ -56,6 +56,6 @@ front-end:
   redirect: http://localhost:3000/oauth2/redirect
 
 supabase:
-  url: ${storage_url}
-  bucket-name: ${bucket_name}
-  access-key: ${anon_key}
+  url:
+  bucket-name:
+  access-key:

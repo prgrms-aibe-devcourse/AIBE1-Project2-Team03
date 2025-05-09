@@ -18,7 +18,7 @@ public class ApplyController {
   private final ApplyService applyService;
 
   /**
-   * 지원 요청을 처리하는 엔드포인트
+//   * 지원 요청을 처리하는 엔드포인트
    * 예시 요청:
    * POST /api/applies
    * {
