@@ -4,7 +4,8 @@ import aibe.hosik.auth.JwtTokenProvider;
 import aibe.hosik.auth.dto.LoginRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
 import aibe.hosik.auth.dto.SignUpRequest;
-import aibe.hosik.auth.service.LocalUserService;
+import aibe.hosik.user.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final LocalUserService userService;
+    private final UserService userService;
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtProvider;
 

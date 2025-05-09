@@ -1,6 +1,7 @@
 package aibe.hosik.auth;
 
-import aibe.hosik.auth.model.entity.SocialType;
+import aibe.hosik.auth.service.CustomUserDetailsService;
+import aibe.hosik.user.SocialType;
 import aibe.hosik.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Value("${front-end.redirect}")
     private String frontEndRedirect;
@@ -53,12 +55,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/data/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
+                /*.formLogin(form -> form
                         .loginProcessingUrl("/auth/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .successHandler(authSuccessHandler())
-                )
+                )*/
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login")
                         .userInfoEndpoint(userlnfo -> userlnfo
@@ -67,7 +69,10 @@ public class SecurityConfig {
                         .successHandler(oauth2SuccessHandler())
                 )
                 .authenticationProvider(daoAuthProvider())
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -92,7 +97,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtFilter() {
-        return new JwtAuthenticationFilter(jwtTokenProvider);
+        return new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService);
     }
 
     @Bean

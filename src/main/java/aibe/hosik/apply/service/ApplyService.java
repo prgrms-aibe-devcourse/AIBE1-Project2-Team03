@@ -42,7 +42,7 @@ public class ApplyService {
 
     Apply apply = Apply.builder() // Apply 엔티티 생성
             .post(post) // 어떤 모집글에
-           // .userId(userId) // 누가
+            // .userId(userId) // 누가
             .user(user)
             .resume(resume) // 어떤 이력서로
             .isSelected(false) // 기본값은 미선정
