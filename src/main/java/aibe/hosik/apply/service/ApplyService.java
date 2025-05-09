@@ -1,14 +1,19 @@
 package aibe.hosik.apply.service;
 
+import aibe.hosik.apply.dto.ApplyUserResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.resume.Resume;
 import aibe.hosik.resume.ResumeRepository;
+import aibe.hosik.user.User;
+import aibe.hosik.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,6 +23,7 @@ public class ApplyService {
   private final ApplyRepository applyRepository; // Apply 테이블과 통신하는 레포
   private final PostRepository postRepository; // Post 테이블과 통신
   private final ResumeRepository resumeRepository; // Resume 테이블과 통신
+  private final UserRepository userRepository; // User 테이블과 통신
   /**
    * 사용자가 특정 모집글에 특정 이력서를 가지고 지원하는 기능
    * @param userId 지원자 ID
@@ -31,13 +37,45 @@ public class ApplyService {
     Resume resume = resumeRepository.findById(resumeId)
             .orElseThrow(() -> new IllegalArgumentException("Resume not found")); // resumeId로 이력서 조회
 
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
     Apply apply = Apply.builder() // Apply 엔티티 생성
             .post(post) // 어떤 모집글에
-            .userId(userId) // 누가
+           // .userId(userId) // 누가
+            .user(user)
             .resume(resume) // 어떤 이력서로
             .isSelected(false) // 기본값은 미선정
             .build();
 
     applyRepository.save(apply); // DB에 저장
+  }
+  /**
+   * 특정 모집글에 지원한 모든 지원자를 조회하는 기능
+   * @param postId 모집글 ID
+   * @return 해당 모집글에 지원한 Apply 목록
+   */
+  public List<Apply> getAppliesByPostId(Long postId) {
+    return applyRepository.findByPostId(postId);
+  }
+
+  // ✅ 지원자 목록을 ApplyUserResponse 형식으로 반환하는 메서드
+  public List<ApplyUserResponse> getApplyUserResponsesByPostId(Long postId) {
+    List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId);
+    return applies.stream()
+            .map(apply -> {
+              String personality = apply.getResume().getPersonality();
+              String portfolio = apply.getResume().getPortfolio();
+              return new ApplyUserResponse(
+                      apply.getUser().getId(),
+                      apply.getUser().getEmail(),
+                      apply.getUser().getProfile().getNickname(),
+                      apply.getUser().getProfile().getImage(),
+                      apply.getUser().getProfile().getIntroduction(),
+                      personality,
+                      portfolio
+              );
+            })
+            .toList();
   }
 }

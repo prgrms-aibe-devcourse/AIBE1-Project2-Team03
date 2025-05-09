@@ -14,4 +14,6 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "WHERE a.post.id = :postId AND a.isSelected = true")
     List<Apply> findWithUserAndProfileByPostId(@Param("postId") Long postId);
     int countByPostIdAndIsSelectedTrue(Long postId);
+
+    List<Apply> findByPostId(Long postId);
 }
