@@ -4,4 +4,3 @@ spring:
       enabled: always
   profiles:
     active: prod
-
