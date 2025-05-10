@@ -1,4 +1,4 @@
-package aibe.hosik.analysis;
+package aibe.hosik.analysis.entity;
 
 import aibe.hosik.apply.entity.Apply;
 import jakarta.persistence.*;
@@ -28,4 +28,13 @@ public class Analysis {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private Apply apply;
+
+  public static Analysis of(Apply apply, String result, String summary, int score) {
+    return Analysis.builder()
+            .apply(apply)
+            .result(result)
+            .summary(summary)
+            .score(score)
+            .build();
+  }
 }

@@ -1,5 +1,6 @@
-package aibe.hosik.analysis;
+package aibe.hosik.analysis.controller;
 
+import aibe.hosik.analysis.service.AnalysisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

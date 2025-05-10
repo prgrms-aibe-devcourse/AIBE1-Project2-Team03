@@ -52,11 +52,32 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     List<Apply> findWithUserAndResumeByPostId(@Param("postId") Long postId);
 
 
+    /**
+     * 특정 모집글에 지원한 지원자들의 정보, 이력서, 기술 스킬을 함께 조회한다.
+     *
+     * @param postId 모집글 ID
+     * @return Apply 리스트 (User + Profile + Resume 포함)
+     */
     @Query("SELECT a FROM Apply a " +
             "JOIN FETCH a.user u " +
             "JOIN FETCH u.profile p " +
             "JOIN FETCH a.resume r " +
             "WHERE a.post.id = :postId")
     List<Apply> findWithUserResumeAndSkillsByPostId(@Param("postId") Long postId);
+
+    /**
+     * 특정 모집글에 지원한 지원자들과 그들의 이력서, 프로필 및 분석 결과를 함께 조회한다.
+     * (AI 분석 결과까지 한 번에 조회)
+     *
+     * @param postId 모집글 ID
+     * @return Apply 리스트 (User + Profile + Resume + Analysis 포함)
+     */
+    @Query("SELECT DISTINCT a FROM Apply a " +
+            "JOIN FETCH a.user u " +
+            "JOIN FETCH u.profile p " +
+            "JOIN FETCH a.resume r " +
+            "LEFT JOIN FETCH a.analysis " +
+            "WHERE a.post.id = :postId")
+    List<Apply> findWithUserResumeAndAnalysisByPostId(@Param("postId") Long postId);
 
 }

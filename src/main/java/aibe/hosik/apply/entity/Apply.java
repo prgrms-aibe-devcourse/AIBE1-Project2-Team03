@@ -1,5 +1,6 @@
 package aibe.hosik.apply.entity;
 
+import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.resume.entity.Resume;
@@ -9,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -34,6 +38,10 @@ public class Apply extends TimeEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
+
+  // ai 파트 연결
+  @OneToMany(mappedBy = "apply", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Analysis> analysis = new ArrayList<>();
 
   /**
    * 지정된 모집글, 사용자, 이력서 및 이유를 바탕으로 Apply 객체를 생성한다.
