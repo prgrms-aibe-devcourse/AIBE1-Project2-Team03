@@ -132,6 +132,8 @@ public class SecurityConfig {
                     username = "github_" + user.getAttribute("login");
             case KAKAO  ->
                     username = "kakao_"  + user.getAttribute("id").toString();
+            case GOOGLE ->
+                    username = "google_" + user.getAttribute("sub").toString();
             default     -> throw new IllegalArgumentException("처리되지 않은 소셜 타입: " + socialType);
             }
 

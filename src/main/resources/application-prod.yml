@@ -18,7 +18,7 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             scope:
               - profile_nickname
-             # - account_email
+              # - account_email
           github:
             client-id: ${CLIENT_GITHUB_ID}
             client-secret: ${CLIENT_GITHUB_SECRET}
@@ -27,6 +27,15 @@ spring:
             scope:
               - read:user
               - user:email
+          google:
+            clientId: ${CLIENT_GOOGLE_ID}
+            clientSecret: ${CLIENT_GOOGLE_SECRET}
+            authorization-grant-type: authorization_code
+            redirectUri: "{baseUrl}/login/oauth2/code/google"
+            scope:
+              - openid
+              - profile
+              - email
         provider:
           kakao:
             authorization-uri:  https://kauth.kakao.com/oauth/authorize
@@ -38,6 +47,11 @@ spring:
             token-uri:          https://github.com/login/oauth/access_token
             user-info-uri:      https://api.github.com/user
             user-name-attribute: id
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
@@ -65,7 +79,6 @@ supabase:
   bucket-name: ${STORAGE_BUCKET_NAME}
   access-key: ${STORAGE_KEY}
 
-#cors 설정
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
