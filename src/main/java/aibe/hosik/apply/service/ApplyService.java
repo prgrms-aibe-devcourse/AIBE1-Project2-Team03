@@ -1,5 +1,8 @@
 package aibe.hosik.apply.service;
 
+import aibe.hosik.analysis.entity.Analysis;
+import aibe.hosik.analysis.repository.AnalysisRepository;
+import aibe.hosik.analysis.service.AnalysisService;
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
 import aibe.hosik.apply.dto.ApplyResumeResponse;
 import aibe.hosik.apply.dto.ApplyUserResponse;
@@ -32,6 +35,8 @@ public class ApplyService {
   private final ResumeRepository resumeRepository; // Resume 테이블과 통신
   private final UserRepository userRepository; // User 테이블과 통신
   private final ResumeSkillRepository resumeSkillRepository;
+  private final AnalysisRepository analysisRepository;
+  private final AnalysisService analysisService;
 
 
   /**
@@ -50,14 +55,23 @@ public class ApplyService {
     User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+
       // 한 번 더 검증 본인의 이력서인지 확인
       if (!resume.getUser().getId().equals(userId)) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
       }
 
     Apply apply = Apply.of(post, user, resume, reason);
-
     applyRepository.save(apply); // DB에 저장
+
+      log.info("AI 분석 시작 - applyId: {}", apply.getId());
+      try {
+          analysisService.analysisApply(apply.getId());
+
+      } catch (Exception e) {
+          log.error("AI 분석 중 오류 발생", e);
+          // 지원 자체는 성공으로 처리하고 분석 오류만 로깅
+      }
   }
 
 
@@ -110,7 +124,6 @@ public class ApplyService {
             .toList();
   }
 
-
     /**
      * 지정된 구인 공고 ID에 연결된 지원 데이터를 기반으로, 지원 정보와 이력서에 포함된 스킬 정보를 함께 반환합니다.
      *
@@ -127,15 +140,16 @@ public class ApplyService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 지원자 정보를 조회할 수 있습니다.");
         }
 
-        List<Apply> applies = applyRepository.findWithUserResumeAndSkillsByPostId(postId);
+        List<Apply> applies = applyRepository.findWithUserResumeAndAnalysisByPostId(postId);
 
         return applies.stream()
                 .map(apply -> {
                     // 이력서에 연결된 스킬 정보 조회
                     List<String> skills = getSkillsByResumeId(apply.getResume().getId());
+                    Analysis analysis = analysisRepository.findLatestByApplyId(apply.getId()).orElse(null);
 
                     // 정적 팩토리 메서드 활용
-                    return ApplyByResumeSkillResponse.from(apply, skills);
+                    return ApplyByResumeSkillResponse.from(apply, skills, analysis);
                 })
                 .collect(Collectors.toList());
     }

@@ -1,5 +1,6 @@
 package aibe.hosik.apply.dto;
 
+import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.profile.Profile;
 import aibe.hosik.resume.entity.Resume;
@@ -16,15 +17,16 @@ public record ApplyByResumeSkillResponse(
         String personality,
         String portfolioUrl,
         List<String> skills,
-        // TODO : AI 관련 필드 (추후 추가 예정)
+
         Integer aiScore,
         String aiReason,
         String aiSummary
 ) {
-    public static ApplyByResumeSkillResponse from(Apply apply, List<String> skills) {
+    public static ApplyByResumeSkillResponse from(Apply apply, List<String> skills, Analysis analysis) {
         User user = apply.getUser();
         Profile profile = user.getProfile();
         Resume resume = apply.getResume();
+
 
         return new ApplyByResumeSkillResponse(
                 user.getId(),
@@ -35,9 +37,9 @@ public record ApplyByResumeSkillResponse(
                 resume.getTitle(),
                 resume.getPortfolio(),
                 skills,
-                null, // AI 점수 (현재는 null)
-                null, // AI 추천
-                null  // AI 자기소개서 요약 (현재는 null)
+                analysis != null ? analysis.getScore() : null,
+                analysis != null ? analysis.getResult() : null,
+                analysis != null ? analysis.getSummary() : null
         );
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -46,8 +47,12 @@ public class AnalysisService {
   }
 
   public Analysis analysisApply(Long applyId) {
+
     Apply apply = applyRepository.findById(applyId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+
+    // 강제 재실행시 테스트
+    Optional<Analysis> existing = analysisRepository.findLatestByApplyId(applyId);
 
     Resume resume = apply.getResume();
     Post post = apply.getPost();
@@ -60,6 +65,7 @@ public class AnalysisService {
     String postRequirementPersonality = post.getRequirementPersonality();
     String resumePersonality = resume.getPersonality();
 
+    log.info("AI 분석 시작 - applyId: {}", applyId);
     try {
       // 병렬처리
       // 모델 1, 2 병렬 분석
@@ -88,12 +94,22 @@ public class AnalysisService {
       int finalScore =  extractScoreFromAnalysis(finalAnalysisResult);
 
       // AI 결과 저장
-      Analysis analysis = Analysis.builder()
-              .apply(apply)
-              .result(finalAnalysisResult)
-              .summary(resumeSummary)
-              .score(finalScore)
-              .build();
+      Analysis analysis;
+      if (existing.isPresent()) {
+        // 덮어쓰기
+        analysis = existing.get();
+        analysis.setResult(finalAnalysisResult);
+        analysis.setScore(finalScore);
+        analysis.setSummary(resumeSummary);
+      } else {
+        // 새로 생성
+        analysis = Analysis.builder()
+                .apply(apply)
+                .result(finalAnalysisResult)
+                .summary(resumeSummary)
+                .score(finalScore)
+                .build();
+      }
 
       return analysisRepository.save(analysis);
     } catch (Exception e) {

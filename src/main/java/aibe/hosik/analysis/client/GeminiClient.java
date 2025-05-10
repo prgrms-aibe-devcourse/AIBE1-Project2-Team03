@@ -14,30 +14,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class GeminiClient {
     private final RestTemplate restTemplate;
+    private final GeminiProperties geminiProperties;
 
-    @Value("{gemini.api-key}")
-    private String apiKey;
-
-    @Value("{gemini.base-url}")
-    private String baseUrl;
+    private String getApiKeyForModel(String model) {
+        String key = geminiProperties.getModelKeys().get(model);
+        if (key == null) {
+            throw new IllegalArgumentException("해당 모델에 대한 API 키가 존재하지 않습니다: " + model);
+        }
+        return key;
+    }
 
     // 모델 분리
     private static final String model1 = "gemini-1.5-flash";
     private static final String model2 = "gemini-1.5-pro";
-    private static final String model3 = "gemini-1.5-pro";
+    private static final String model3 = "gemini-2.0-flash";
     private static final String model4 = "gemini-2.0-flash";
 
     // 각 모델을 사용하여 Gemini API에 요청을 보냄
     public String generateContent(String prompt, String model) {
         try {
+            String apiKey = getApiKeyForModel(model);
             // https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=GEMINI_API_KE
-            String url = String.format("%s/models/%s:generateContent?key=%s", baseUrl, model, apiKey);
+            String url = String.format("%s/models/%s:generateContent?key=%s", geminiProperties.getBaseUrl(), model, apiKey);
 
             // HTTP 헤더 설정 - JSON 컨텐츠 타입 지정
             HttpHeaders headers = new HttpHeaders();
