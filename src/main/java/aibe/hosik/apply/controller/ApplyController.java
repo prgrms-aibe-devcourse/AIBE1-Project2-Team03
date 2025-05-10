@@ -1,6 +1,6 @@
 package aibe.hosik.apply.controller;
 
-import aibe.hosik.apply.ApplyRequest;
+import aibe.hosik.apply.dto.ApplyRequest;
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
 import aibe.hosik.apply.dto.ApplyResumeResponse;
 import aibe.hosik.apply.dto.ApplyUserResponse;
@@ -30,13 +30,6 @@ public class ApplyController {
    * 사용자가 모집글에 지원하는 API
    *
    * @param request 지원 요청 정보 (userId, postId, resumeId)
-   *                예시 요청:
-   *                POST /api/applies
-   *                {
-   *                "userId": 1,
-   *                "postId": 2,
-   *                "resumeId": 3
-   *                }
    * @return
    */
   @SecurityRequirement(name = "JWT")
@@ -46,7 +39,7 @@ public class ApplyController {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
-    applyService.apply(request.getUserId(), request.getPostId(), request.getResumeId());
+    applyService.apply(user.getId(), request.postId(), request.resumeId(), request.reason());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
@@ -92,7 +85,7 @@ public class ApplyController {
    * (AI 분석 및 모아보기 용도)
    */
   @SecurityRequirement(name = "JWT")
-  @Operation(summary = "모집글별 지원 소개서 모아보기", description = "특정 모집글에 지원한 사람들 모아보기")
+  @Operation(summary = "모집글별 지원서 모아보기", description = "특정 모집글에 지원한 사람들 모아보기")
   @GetMapping("/post/{postId}/resume-skills")
   public ResponseEntity<List<ApplyByResumeSkillResponse>> getApplyResumeWithSkills(@PathVariable Long postId,@AuthenticationPrincipal  User user) {
     if (user == null) {

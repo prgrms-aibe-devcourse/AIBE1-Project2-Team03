@@ -7,8 +7,8 @@ import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
-import aibe.hosik.resume.Resume;
-import aibe.hosik.resume.ResumeRepository;
+import aibe.hosik.resume.entity.Resume;
+import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.skill.repository.ResumeSkillRepository;
 import aibe.hosik.user.User;
@@ -40,7 +40,7 @@ public class ApplyService {
    * @param postId 모집글 ID
    * @param resumeId 지원자가 선택한 이력서 ID
    */
-  public void apply(Long userId, Long postId, Long resumeId) {
+  public void apply(Long userId, Long postId, Long resumeId, String reason) {
     Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("Post not found")); // postId로 모집글 조회
 
@@ -50,12 +50,12 @@ public class ApplyService {
     User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    Apply apply = Apply.builder() // Apply 엔티티 생성
-            .post(post) // 어떤 모집글에
-            .user(user) // 누가
-            .resume(resume) // 어떤 이력서로
-            .isSelected(false) // 기본값은 미선정
-            .build();
+      // 한 번 더 검증 본인의 이력서인지 확인
+      if (!resume.getUser().getId().equals(userId)) {
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
+      }
+
+    Apply apply = Apply.of(post, user, resume, reason);
 
     applyRepository.save(apply); // DB에 저장
   }

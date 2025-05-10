@@ -2,7 +2,7 @@ package aibe.hosik.apply.entity;
 
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.post.entity.Post;
-import aibe.hosik.resume.Resume;
+import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,4 +34,24 @@ public class Apply extends TimeEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
+
+  /**
+   * 지정된 모집글, 사용자, 이력서 및 이유를 바탕으로 Apply 객체를 생성한다.
+   * 생성된 객체는 기본적으로 미선정 상태로 설정된다.
+   *
+   * @param post 모집글 객체
+   * @param user 사용자 객체
+   * @param resume 이력서 객체
+   * @param reason 지원 사유
+   * @return 생성된 Apply 객체
+   */
+  public static Apply of(Post post, User user, Resume resume, String reason) {
+    return Apply.builder()
+            .post(post)
+            .user(user)
+            .resume(resume)
+            .isSelected(false)
+            .reason(reason)
+            .build();
+  }
 }

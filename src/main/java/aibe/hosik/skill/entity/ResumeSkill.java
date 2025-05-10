@@ -1,7 +1,6 @@
 package aibe.hosik.skill.entity;
 
-import aibe.hosik.profile.Profile;
-import aibe.hosik.resume.Resume;
+import aibe.hosik.resume.entity.Resume;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,7 +2,7 @@ package aibe.hosik.apply.dto;
 
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.profile.Profile;
-import aibe.hosik.resume.Resume;
+import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.user.User;
 
 import java.util.List;
