@@ -1,4 +1,4 @@
-package aibe.hosik.resume;
+package aibe.hosik.resume.entity;
 
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.user.User;

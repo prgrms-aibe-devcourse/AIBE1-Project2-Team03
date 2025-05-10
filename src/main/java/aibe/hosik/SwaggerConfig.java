@@ -22,7 +22,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
-                        new Server().url("https://team0.kro.kr")
+                        new Server().url("/").description("기본 (현재 호스트)"),
+                        new Server().url("https://team0.kro.kr").description("배포 서버")
                 ));
     }
 }
