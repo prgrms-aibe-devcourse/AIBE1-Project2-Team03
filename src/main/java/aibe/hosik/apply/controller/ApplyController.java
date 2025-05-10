@@ -1,13 +1,21 @@
 package aibe.hosik.apply.controller;
 
 import aibe.hosik.apply.ApplyRequest;
+import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
 import aibe.hosik.apply.dto.ApplyResumeResponse;
 import aibe.hosik.apply.dto.ApplyUserResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.service.ApplyService;
+import aibe.hosik.user.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,17 +30,24 @@ public class ApplyController {
    * 사용자가 모집글에 지원하는 API
    *
    * @param request 지원 요청 정보 (userId, postId, resumeId)
-   * 예시 요청:
-   * POST /api/applies
-   * {
-   *   "userId": 1,
-   *   "postId": 2,
-   *   "resumeId": 3
-   * }
+   *                예시 요청:
+   *                POST /api/applies
+   *                {
+   *                "userId": 1,
+   *                "postId": 2,
+   *                "resumeId": 3
+   *                }
+   * @return
    */
+  @SecurityRequirement(name = "JWT")
+  @Operation(summary = "모집글에 지원", description = "사용자가 모집글에 지원합니다. 자신의 이력서만 사용 가능합니다.")
   @PostMapping
-  public void apply(@RequestBody ApplyRequest request) {
+  public ResponseEntity<?> apply(@RequestBody ApplyRequest request, @AuthenticationPrincipal User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
     applyService.apply(request.getUserId(), request.getPostId(), request.getResumeId());
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**
@@ -70,5 +85,19 @@ public class ApplyController {
   @GetMapping("/post/{postId}/resumes")
   public List<ApplyResumeResponse> getApplyResumes(@PathVariable Long postId) {
     return applyService.getApplyResumesByPostId(postId);
+  }
+
+  /**
+   * 특정 모집글에 지원한 사람들의 자기소개서와 스킬 정보를 함께 조회하는 API
+   * (AI 분석 및 모아보기 용도)
+   */
+  @SecurityRequirement(name = "JWT")
+  @Operation(summary = "모집글별 지원 소개서 모아보기", description = "특정 모집글에 지원한 사람들 모아보기")
+  @GetMapping("/post/{postId}/resume-skills")
+  public ResponseEntity<List<ApplyByResumeSkillResponse>> getApplyResumeWithSkills(@PathVariable Long postId,@AuthenticationPrincipal  User user) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
+    return ResponseEntity.ok(applyService.getApplyResumeWithSkillsByPostId(postId, user));
   }
 }

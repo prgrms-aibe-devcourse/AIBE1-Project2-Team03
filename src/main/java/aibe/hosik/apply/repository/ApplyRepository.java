@@ -50,4 +50,12 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "JOIN FETCH a.resume r " +
             "WHERE a.post.id = :postId")
     List<Apply> findWithUserAndResumeByPostId(@Param("postId") Long postId);
+
+
+    @Query("SELECT a FROM Apply a " +
+            "JOIN FETCH a.user u " +
+            "JOIN FETCH u.profile p " +
+            "JOIN FETCH a.resume r " +
+            "WHERE a.post.id = :postId")
+    List<Apply> findWithUserResumeAndSkillsByPostId(@Param("postId") Long postId);
 }
