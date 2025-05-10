@@ -86,17 +86,15 @@ public class ApplyService {
   /**
    * 특정 모집글에 지원한 사람들의 자기소개서 전문을 반환하는 기능
    * (AI 분석용 전체보기 용도)
-   *
-   * @param postId 모집글 ID
-   * @return ApplyResumeResponse 리스트 (자기소개서 전문 포함)
    */
   public List<ApplyResumeResponse> getApplyResumesByPostId(Long postId) {
     List<Apply> applies = applyRepository.findWithUserAndResumeByPostId(postId);
     return applies.stream()
             .map(apply -> new ApplyResumeResponse(
                     apply.getUser().getId(),
-                    apply.getUser().getProfile().getNickname(),
-                    apply.getResume().getContent() // 자기소개서 전문
+                    apply.getResume().getId(),
+                    apply.getResume().getContent(),
+                    apply.getResume().getPersonality()
             ))
             .toList();
   }

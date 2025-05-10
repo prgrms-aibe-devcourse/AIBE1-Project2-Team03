@@ -8,12 +8,10 @@ package aibe.hosik.apply.dto;
  * @param resumeId     이력서 ID
  * @param introduction 자기소개 내용
  * @param personality  성향 정보
- * @param techStack    기술 스택 (예: Java, Spring 등)
  */
 public record ApplyResumeResponse(
         Long userId,
         Long resumeId,
         String introduction,
-        String personality,
-        String techStack
+        String personality
 ) {}
