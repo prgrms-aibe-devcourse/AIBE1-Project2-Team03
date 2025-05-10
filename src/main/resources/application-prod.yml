@@ -15,7 +15,7 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             scope:
               - profile_nickname
               # - account_email
@@ -23,7 +23,7 @@ spring:
             client-id: ${CLIENT_GITHUB_ID}
             client-secret: ${CLIENT_GITHUB_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/github"
+            redirect-uri: "{baseUrl}/login/oauth2/code/github"
             scope:
               - read:user
               - user:email
@@ -31,7 +31,7 @@ spring:
             clientId: ${CLIENT_GOOGLE_ID}
             clientSecret: ${CLIENT_GOOGLE_SECRET}
             authorization-grant-type: authorization_code
-            redirectUri: "http://localhost:8080/login/oauth2/code/google"
+            redirectUri: "{baseUrl}/login/oauth2/code/google"
             scope:
               - openid
               - profile
@@ -65,8 +65,6 @@ spring:
         show_sql: true
 springdoc:
   swagger-ui:
-    servers:
-      - url: https://team0.kro.kr
     enabled: true
   api-docs:
     enabled: true
@@ -82,4 +80,4 @@ supabase:
   access-key: ${STORAGE_KEY}
 app:
   cors:
-    allowed-origins: https://team0.kro.kr,http://localhost:3000,https://team0.vercel.app
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
