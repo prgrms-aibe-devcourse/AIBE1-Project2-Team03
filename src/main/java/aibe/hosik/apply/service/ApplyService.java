@@ -1,5 +1,6 @@
 package aibe.hosik.apply.service;
 
+import aibe.hosik.apply.dto.ApplyResumeResponse;
 import aibe.hosik.apply.dto.ApplyUserResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.repository.ApplyRepository;
@@ -50,15 +51,20 @@ public class ApplyService {
     applyRepository.save(apply); // DB에 저장
   }
   /**
-   * 특정 모집글에 지원한 모든 지원자를 조회하는 기능
+   * 특정 모집글에 지원한 모든 Apply 객체를 조회하는 기능
    * @param postId 모집글 ID
-   * @return 해당 모집글에 지원한 Apply 목록
+   * @return Apply 리스트
    */
   public List<Apply> getAppliesByPostId(Long postId) {
     return applyRepository.findByPostId(postId);
   }
 
-  // ✅ 지원자 목록을 ApplyUserResponse 형식으로 반환하는 메서드
+  /**
+   * 특정 모집글에 지원한 지원자 정보를 요약 형태로 조회하는 기능
+   *
+   * @param postId 모집글 ID
+   * @return ApplyUserResponse 리스트
+   */
   public List<ApplyUserResponse> getApplyUserResponsesByPostId(Long postId) {
     List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId);
     return applies.stream()
@@ -75,6 +81,21 @@ public class ApplyService {
                       portfolio
               );
             })
+            .toList();
+  }
+  /**
+   * 특정 모집글에 지원한 사람들의 자기소개서 전문을 반환하는 기능
+   * (AI 분석용 전체보기 용도)
+   */
+  public List<ApplyResumeResponse> getApplyResumesByPostId(Long postId) {
+    List<Apply> applies = applyRepository.findWithUserAndResumeByPostId(postId);
+    return applies.stream()
+            .map(apply -> new ApplyResumeResponse(
+                    apply.getUser().getId(),
+                    apply.getResume().getId(),
+                    apply.getResume().getContent(),
+                    apply.getResume().getPersonality()
+            ))
             .toList();
   }
 }

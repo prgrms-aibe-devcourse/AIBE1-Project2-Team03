@@ -1,6 +1,7 @@
 package aibe.hosik.apply.controller;
 
 import aibe.hosik.apply.ApplyRequest;
+import aibe.hosik.apply.dto.ApplyResumeResponse;
 import aibe.hosik.apply.dto.ApplyUserResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.service.ApplyService;
@@ -56,5 +57,18 @@ public class ApplyController {
   @GetMapping("/post/{postId}/users")
   public List<ApplyUserResponse> getApplyUsersByPost(@PathVariable Long postId) {
     return applyService.getApplyUserResponsesByPostId(postId);
+  }
+
+  /**
+   * 특정 모집글에 지원한 사람들의 자기소개서 전문을 조회하는 API
+   * (AI 분석용 전체 보기 용도)
+   *
+   * @param postId 모집글 ID
+   * @return 자기소개서 정보 리스트 (ApplyResumeResponse)
+   * 예시 요청: GET /api/applies/post/1/resumes
+   */
+  @GetMapping("/post/{postId}/resumes")
+  public List<ApplyResumeResponse> getApplyResumes(@PathVariable Long postId) {
+    return applyService.getApplyResumesByPostId(postId);
   }
 }

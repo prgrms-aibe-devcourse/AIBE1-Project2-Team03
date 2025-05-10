@@ -33,6 +33,7 @@ public class Resume extends TimeEntity {
   @Column
   private String portfolio;
 
+
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 }
