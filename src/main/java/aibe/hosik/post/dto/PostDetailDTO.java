@@ -23,7 +23,9 @@ public record PostDetailDTO(
 
         // 현재 선택된 목록 보여주기
         List<MatchedUserDTO> matchedUsers,
-        int currentCount
+        int currentCount,
+
+        Long userId
 ) {
     public static PostDetailDTO from(Post post, List<String> skills, List<MatchedUserDTO> matchedUsers, int currentCount) {
     return new PostDetailDTO(
@@ -38,6 +40,7 @@ public record PostDetailDTO(
             post.getType().toString(),
             skills,
             matchedUsers,
-            currentCount
+            currentCount,
+            post.getUser().getId()
     );
 }}
