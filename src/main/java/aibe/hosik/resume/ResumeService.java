@@ -7,12 +7,12 @@ import aibe.hosik.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,14 +23,6 @@ public class ResumeService {
 
   /**
    * 새 자기소개서 등록
-   *
-   * @param userId      사용자 ID
-   * @param title       자기소개서 제목
-   * @param content     자기소개서 내용
-   * @param personality 성격 특성
-   * @param portfolio   포트폴리오 링크
-   * @param isMain      대표 자기소개서 여부
-   * @return 저장된 자기소개서
    */
   @Transactional
   public Resume createResume(Long userId, String title, String content, String personality,
@@ -45,7 +37,7 @@ public class ResumeService {
       resetMainResume(userId);
     }
 
-    Resume resume = Resume.builder()
+    Resume resume = Resume.baseBuilder()
             .user(user)
             .title(title)
             .content(content)
@@ -59,15 +51,6 @@ public class ResumeService {
 
   /**
    * 자기소개서 수정
-   *
-   * @param resumeId    자기소개서 ID
-   * @param userId      사용자 ID (권한 확인용)
-   * @param title       자기소개서 제목
-   * @param content     자기소개서 내용
-   * @param personality 성격 특성
-   * @param portfolio   포트폴리오 링크
-   * @param isMain      대표 자기소개서 여부
-   * @return 수정된 자기소개서
    */
   @Transactional
   public Resume updateResume(Long resumeId, Long userId, String title, String content,
@@ -81,26 +64,20 @@ public class ResumeService {
       resetMainResume(userId);
     }
 
-    // 엔티티 수정을 위한 새 인스턴스 생성 (불변성 패턴)
-    Resume updatedResume = Resume.builder()
-            .id(resumeId)
-            .user(resume.getUser())
-            .title(title)
-            .content(content)
-            .personality(personality)
-            .portfolio(portfolio)
-            .isMain(isMain)
-            .build();
+    // 상태 변경 메서드를 사용하여 엔티티 수정
+    resume.updateResume(title, content, personality, portfolio);
 
-    return repository.save(updatedResume);
+    if (isMain) {
+      resume.setAsMain();
+    } else {
+      resume.unsetMain();
+    }
+
+    return repository.save(resume);
   }
 
   /**
    * 대표 자기소개서로 설정
-   *
-   * @param resumeId 자기소개서 ID
-   * @param userId   사용자 ID (권한 확인용)
-   * @return 대표로 설정된 자기소개서
    */
   @Transactional
   public Resume setAsMainResume(Long resumeId, Long userId) {
@@ -117,24 +94,12 @@ public class ResumeService {
     resetMainResume(userId);
 
     // 대표 자기소개서로 설정
-    Resume mainResume = Resume.builder()
-            .id(resumeId)
-            .user(resume.getUser())
-            .title(resume.getTitle())
-            .content(resume.getContent())
-            .personality(resume.getPersonality())
-            .portfolio(resume.getPortfolio())
-            .isMain(true)
-            .build();
-
-    return repository.save(mainResume);
+    resume.setAsMain();
+    return repository.save(resume);
   }
 
   /**
    * 자기소개서 삭제
-   *
-   * @param resumeId 자기소개서 ID
-   * @param userId   사용자 ID (권한 확인용)
    */
   @Transactional
   public void deleteResume(Long resumeId, Long userId) {
@@ -146,9 +111,6 @@ public class ResumeService {
 
   /**
    * 자기소개서 조회
-   *
-   * @param resumeId 자기소개서 ID
-   * @return 자기소개서
    */
   @Transactional(readOnly = true)
   public Resume getResume(Long resumeId) {
@@ -158,11 +120,7 @@ public class ResumeService {
   }
 
   /**
-   * 사용자의 자기소개서 목록 조회
-   *
-   * @param userId   사용자 ID
-   * @param pageable 페이징 정보
-   * @return 자기소개서 목록
+   * 사용자의 자기소개서 목록 조회 (페이징)
    */
   @Transactional(readOnly = true)
   public Page<Resume> getUserResumes(Long userId, Pageable pageable) {
@@ -171,10 +129,18 @@ public class ResumeService {
   }
 
   /**
+   * 사용자의 최근 자기소개서 목록 조회 (제한된 개수)
+   */
+  @Transactional(readOnly = true)
+  public List<Resume> getRecentResumes(Long userId, int limit) {
+    log.info("Getting recent resumes for user ID: {}", userId);
+    // PageRequest를 사용하여 제한된 개수만 조회
+    Pageable pageable = PageRequest.of(0, limit);
+    return repository.findTopByUserIdOrderByUpdatedAtDesc(userId, pageable);
+  }
+
+  /**
    * 사용자의 포트폴리오 자기소개서 목록 조회
-   *
-   * @param userId 사용자 ID
-   * @return 포트폴리오가 있는 자기소개서 목록
    */
   @Transactional(readOnly = true)
   public List<Resume> getUserPortfolios(Long userId) {
@@ -184,9 +150,6 @@ public class ResumeService {
 
   /**
    * 대표 자기소개서 조회
-   *
-   * @param userId 사용자 ID
-   * @return 대표 자기소개서
    */
   @Transactional(readOnly = true)
   public Resume getMainResume(Long userId) {
@@ -195,16 +158,44 @@ public class ResumeService {
             .orElseThrow(() -> new ResourceNotFoundException("대표 자기소개서가 없습니다."));
   }
 
+  /**
+   * 자기소개서 타이틀로 검색
+   */
+  @Transactional(readOnly = true)
+  public List<Resume> searchResumesByTitle(Long userId, String keyword) {
+    log.info("Searching resumes by title for user ID: {} with keyword: {}", userId, keyword);
+    return repository.findByUserIdAndTitleContaining(userId, keyword);
+  }
+
+  /**
+   * 대표 자기소개서 해제
+   */
+  @Transactional
+  public void unsetMainResume(Long userId) {
+    log.info("Unsetting main resume for user ID: {}", userId);
+    repository.findByUserIdAndIsMainTrue(userId).ifPresent(mainResume -> {
+      mainResume.unsetMain();
+      repository.save(mainResume);
+    });
+  }
+
+  /**
+   * 자기소개서 포트폴리오 업데이트
+   */
+  @Transactional
+  public Resume updatePortfolio(Long resumeId, Long userId, String portfolio) {
+    log.info("Updating portfolio for resume ID: {} for user ID: {}", resumeId, userId);
+
+    Resume resume = getResumeWithOwnerCheck(resumeId, userId);
+    resume.updatePortfolio(portfolio);
+
+    return repository.save(resume);
+  }
+
   // 내부 헬퍼 메서드
 
   /**
    * 자기소개서 조회 및 소유자 확인
-   *
-   * @param resumeId 자기소개서 ID
-   * @param userId   사용자 ID
-   * @return 자기소개서
-   * @throws ResourceNotFoundException 자기소개서를 찾을 수 없는 경우
-   * @throws AccessDeniedException     접근 권한이 없는 경우
    */
   private Resume getResumeWithOwnerCheck(Long resumeId, Long userId) {
     Resume resume = repository.findById(resumeId)
@@ -219,22 +210,11 @@ public class ResumeService {
 
   /**
    * 기존 대표 자기소개서 해제
-   *
-   * @param userId 사용자 ID
    */
   private void resetMainResume(Long userId) {
     repository.findByUserIdAndIsMainTrue(userId).ifPresent(mainResume -> {
-      Resume updated = Resume.builder()
-              .id(mainResume.getId())
-              .user(mainResume.getUser())
-              .title(mainResume.getTitle())
-              .content(mainResume.getContent())
-              .personality(mainResume.getPersonality())
-              .portfolio(mainResume.getPortfolio())
-              .isMain(false)
-              .build();
-
-      repository.save(updated);
+      mainResume.unsetMain();
+      repository.save(mainResume);
     });
   }
 }

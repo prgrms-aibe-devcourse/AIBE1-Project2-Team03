@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -40,10 +41,10 @@ public class ResumeController {
     try {
       Resume resume = resumeService.createResume(
               user.getId(),
-              request.getTitle(),
-              request.getContent(),
-              request.getPersonality(),
-              request.getPortfolio(),
+              request.title(),
+              request.content(),
+              request.personality(),
+              request.portfolio(),
               request.isMain()
       );
 
@@ -71,10 +72,10 @@ public class ResumeController {
       Resume resume = resumeService.updateResume(
               resumeId,
               user.getId(),
-              request.getTitle(),
-              request.getContent(),
-              request.getPersonality(),
-              request.getPortfolio(),
+              request.title(),
+              request.content(),
+              request.personality(),
+              request.portfolio(),
               request.isMain()
       );
 
@@ -184,6 +185,53 @@ public class ResumeController {
       return ResponseEntity.ok(portfolios);
     } catch (Exception e) {
       log.error("Error retrieving portfolios for user ID: {}: {}", userId, e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(new ApiResponse(false, e.getMessage()));
+    }
+  }
+
+  /**
+   * 자기소개서 검색
+   */
+  @GetMapping("/search")
+  public ResponseEntity<?> searchResumes(@RequestParam String keyword) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("로그인한 사용자를 찾을 수 없습니다."));
+
+    try {
+      List<Resume> resumes = resumeService.searchResumesByTitle(user.getId(), keyword);
+
+      log.info("Found {} resumes for keyword '{}' by user: {}", resumes.size(), keyword, email);
+      return ResponseEntity.ok(resumes);
+    } catch (Exception e) {
+      log.error("Error searching resumes by keyword '{}' for user {}: {}", keyword, email, e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(new ApiResponse(false, e.getMessage()));
+    }
+  }
+
+  /**
+   * 포트폴리오 업데이트
+   */
+  @PutMapping("/{resumeId}/portfolio")
+  public ResponseEntity<?> updatePortfolio(@PathVariable Long resumeId, @RequestBody Map<String, String> portfolioData) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("로그인한 사용자를 찾을 수 없습니다."));
+
+    try {
+      String portfolio = portfolioData.get("portfolio");
+      Resume resume = resumeService.updatePortfolio(resumeId, user.getId(), portfolio);
+
+      log.info("Updated portfolio for resume ID: {} by user: {}", resumeId, email);
+      return ResponseEntity.ok(resume);
+    } catch (Exception e) {
+      log.error("Error updating portfolio for resume ID: {} by user {}: {}", resumeId, email, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
               .body(new ApiResponse(false, e.getMessage()));
     }

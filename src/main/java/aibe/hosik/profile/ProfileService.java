@@ -2,8 +2,6 @@ package aibe.hosik.profile;
 
 import aibe.hosik.resume.Resume;
 import aibe.hosik.resume.ResumeRepository;
-import aibe.hosik.review.Review;
-import aibe.hosik.review.ReviewRepository;
 import aibe.hosik.user.User;
 import aibe.hosik.user.UserRepository;
 import aibe.hosik.apply.Apply;
@@ -34,7 +32,6 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final ResumeRepository resumeRepository;
-    private final ReviewRepository reviewRepository;
     private final PostRepository postRepository;
     private final ApplyRepository applyRepository;
 
@@ -166,30 +163,21 @@ public class ProfileService {
     }
 
     /**
-     * 리뷰 삭제 (권한 체크 포함)
-     */
-    @Transactional
-    public void deleteReview(Long reviewId, Long currentUserId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("리뷰를 찾을 수 없습니다: " + reviewId));
-
-        // 삭제 권한 확인
-        Profile targetProfile = review.getReviewee().getProfile();
-        if (!targetProfile.canDeleteReview(review, currentUserId)) {
-            throw new AccessDeniedException("리뷰를 삭제할 권한이 없습니다.");
-        }
-
-        reviewRepository.delete(review);
-        log.info("Review deleted. ID: {}", reviewId);
-    }
-
-    /**
-     * 최근 자기소개서 목록 조회
+     * 최근 자기소개서 목록 조회 (서비스 계층에서 일관된 처리)
      */
     @Transactional(readOnly = true)
     public List<Resume> getRecentResumes(Long userId, int limit) {
         log.info("Getting recent resumes for user ID: {}", userId);
-        return resumeRepository.findByUserIdOrderByUpdatedAtDesc(userId, Pageable.ofSize(limit));
+        return resumeRepository.findTopByUserIdOrderByUpdatedAtDesc(userId, limit);
+    }
+
+    /**
+     * 자기소개서 목록 조회 (페이징)
+     */
+    @Transactional(readOnly = true)
+    public Page<Resume> getResumesWithPaging(Long userId, Pageable pageable) {
+        log.info("Getting resumes with paging for user ID: {}", userId);
+        return resumeRepository.findByUserIdOrderByUpdatedAtDesc(userId, pageable);
     }
 
     /**
