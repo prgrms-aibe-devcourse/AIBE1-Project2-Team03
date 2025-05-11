@@ -95,8 +95,8 @@ app:
 #gemini 설정
 gemini:
   model-keys:
-    gemini-1.5-pro: ${GEMINI_MODEL1_KEY}
-    gemini-1.5-flash: ${GEMINI_MODEL2_KEY}
+    gemini-1.5-flash-8b: ${GEMINI_MODEL1_KEY}
+    gemini-2.0-flash-lite: ${GEMINI_MODEL2_KEY}
     gemini-2.0-flash: ${GEMINI_MODEL3_KEY}
   base-url: https://generativelanguage.googleapis.com/v1beta
 
