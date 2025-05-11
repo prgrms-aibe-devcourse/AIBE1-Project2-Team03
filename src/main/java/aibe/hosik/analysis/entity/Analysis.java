@@ -1,17 +1,15 @@
-package aibe.hosik.analysis;
+package aibe.hosik.analysis.entity;
 
 import aibe.hosik.apply.entity.Apply;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class Analysis {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +26,13 @@ public class Analysis {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private Apply apply;
+
+  public static Analysis of(Apply apply, String result, String summary, int score) {
+    return Analysis.builder()
+            .apply(apply)
+            .result(result)
+            .summary(summary)
+            .score(score)
+            .build();
+  }
 }
