@@ -42,11 +42,22 @@ public class SecurityConfig {
     @Value("${front-end.redirect}")
     private String frontEndRedirect;
 
+    @Value("${app.cors.allowed-origins}")
+    private List<String> allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(req -> new CorsConfiguration().applyPermitDefaultValues()))
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(allowedOrigins);
+                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setMaxAge(3600L);
+                    return configuration;
+                }))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/signup", "/auth/login").permitAll()
@@ -55,12 +66,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/data/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                /*.formLogin(form -> form
-                        .loginProcessingUrl("/auth/login")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler(authSuccessHandler())
-                )*/
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/login")
                         .userInfoEndpoint(userlnfo -> userlnfo
@@ -127,6 +132,8 @@ public class SecurityConfig {
                     username = "github_" + user.getAttribute("login");
             case KAKAO  ->
                     username = "kakao_"  + user.getAttribute("id").toString();
+            case GOOGLE ->
+                    username = "google_" + user.getAttribute("sub").toString();
             default     -> throw new IllegalArgumentException("처리되지 않은 소셜 타입: " + socialType);
             }
 
