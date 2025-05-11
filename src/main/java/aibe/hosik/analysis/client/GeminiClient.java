@@ -31,7 +31,7 @@ public class GeminiClient {
         return key;
     }
 
-    // 모델 분리
+    // 모델 분리 4번 호출, 3개 모델 적용
     private static final String model1 = "gemini-1.5-flash";
     private static final String model2 = "gemini-1.5-pro";
     private static final String model3 = "gemini-2.0-flash";
@@ -41,7 +41,6 @@ public class GeminiClient {
     public String generateContent(String prompt, String model) {
         try {
             String apiKey = getApiKeyForModel(model);
-            // https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=GEMINI_API_KE
             String url = String.format("%s/models/%s:generateContent?key=%s", geminiProperties.getBaseUrl(), model, apiKey);
 
             // HTTP 헤더 설정 - JSON 컨텐츠 타입 지정
