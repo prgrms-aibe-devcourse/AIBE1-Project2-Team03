@@ -32,8 +32,8 @@ public class GeminiClient {
     }
 
     // 모델 분리 4번 호출, 3개 모델 적용
-    private static final String model1 = "gemini-1.5-flash";
-    private static final String model2 = "gemini-1.5-pro";
+    private static final String model1 = "gemini-2.0-flash-lite";
+    private static final String model2 = "gemini-1.5-flash-8b";
     private static final String model3 = "gemini-2.0-flash";
     private static final String model4 = "gemini-2.0-flash";
 
