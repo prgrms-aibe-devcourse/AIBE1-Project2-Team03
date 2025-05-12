@@ -8,10 +8,10 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record LoginRequest(
         @NotBlank(message = "아이디는 필수 입력값입니다.")
-        @Schema(description = "ID", example = "1212")
+        @Schema(description = "ID", example = "eeee")
         String username,
 
         @NotBlank(message = "비밀번호는 필수 입력값입니다.")
-        @Schema(description = "PW", example = "12121212")
+        @Schema(description = "PW", example = "eeeeeeee")
         String password
 ) {}

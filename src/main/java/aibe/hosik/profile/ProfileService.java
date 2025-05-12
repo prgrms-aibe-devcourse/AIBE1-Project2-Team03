@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -24,11 +25,11 @@ public class ProfileService {
     return ProfileResponse.from(profile);
   }
 
-  public void updateProfile(ProfileRequest request, Long userId) {
-    Profile profile = profileRepository.findById(userId)
+  public void updateProfile(ProfileRequest request, MultipartFile image, Long profileId) {
+    Profile profile = profileRepository.findById(profileId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PROFILE));
 
-    String profileImage = storageService.upload(request.image());
+    String profileImage = storageService.upload(image);
 
     Profile updated = profile.toBuilder()
         .nickname(request.nickname())

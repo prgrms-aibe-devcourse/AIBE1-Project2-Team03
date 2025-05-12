@@ -4,7 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record ProfileRequest(
     String introduction,
-    String nickname,
-    MultipartFile image
+    String nickname
 ) {
 }
