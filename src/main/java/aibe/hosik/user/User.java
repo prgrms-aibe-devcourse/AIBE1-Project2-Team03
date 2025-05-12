@@ -29,7 +29,8 @@ public class User implements UserDetails {
   private String name;
   @Enumerated(EnumType.STRING)
   @Column(name = "roles", nullable = false)
-  private Role roles;
+  @Builder.Default
+  private Role roles = Role.USER;
   @Enumerated(EnumType.STRING)
   @Column(nullable = true)
   private SocialType socialType;
@@ -40,7 +41,7 @@ public class User implements UserDetails {
   @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
   @JsonIgnore
   private Profile profile;
-  
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Collections.singleton(new SimpleGrantedAuthority(this.roles.name()));

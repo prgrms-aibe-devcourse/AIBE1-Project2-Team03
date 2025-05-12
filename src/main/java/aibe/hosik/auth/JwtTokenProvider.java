@@ -42,6 +42,18 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateToken(String username) {
+        Instant now = Instant.now();
+        Date expiration = new Date(now.toEpochMilli() + expirationMs);
+
+        return Jwts.builder()
+            .subject(username)
+            .issuedAt(Date.from(now))
+            .expiration(expiration)
+            .signWith(getSecretKey(), Jwts.SIG.HS256)
+            .compact();
+    }
+
     public String getUsername(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey())

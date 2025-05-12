@@ -4,6 +4,8 @@ import aibe.hosik.auth.JwtTokenProvider;
 import aibe.hosik.auth.dto.LoginRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
 import aibe.hosik.auth.dto.SignUpRequest;
+import aibe.hosik.auth.dto.SocialLoginRequest;
+import aibe.hosik.user.User;
 import aibe.hosik.user.UserService;
 
 import jakarta.validation.Valid;
@@ -45,22 +47,30 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
             Authentication auth = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.username(), req.password())
+                new UsernamePasswordAuthenticationToken(req.username(), req.password())
             );
             String token = jwtProvider.generateToken(auth);
 
             return ResponseEntity.ok(Map.of("token", token));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "잘못된 아이디 또는 비밀번호입니다."));
+                .body(Map.of("error", "잘못된 아이디 또는 비밀번호입니다."));
         } catch (LockedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "계정이 잠겼습니다. 관리자에게 문의하세요."));
+                .body(Map.of("error", "계정이 잠겼습니다. 관리자에게 문의하세요."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "로그인 처리 중 오류가 발생했습니다."));
+                .body(Map.of("error", "로그인 처리 중 오류가 발생했습니다."));
         }
     }
+
+    @PostMapping("/login/social")
+    public ResponseEntity<?> socialLogin(@Valid @RequestBody SocialLoginRequest request) {
+        User user = userService.socialLogin(request);
+        String token = jwtProvider.generateToken(user.getUsername());
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
     /**
      * 3) 비밀번호 변경
      * PATCH /auth/password
