@@ -1,5 +1,7 @@
 package aibe.hosik.profile;
 
+import aibe.hosik.common.exception.AccessDeniedException;
+import aibe.hosik.common.exception.ResourceNotFoundException;
 import aibe.hosik.resume.Resume;
 import aibe.hosik.resume.ResumeRepository;
 import aibe.hosik.review.Review;
@@ -10,8 +12,6 @@ import aibe.hosik.apply.Apply;
 import aibe.hosik.apply.ApplyRepository;
 import aibe.hosik.post.Post;
 import aibe.hosik.post.PostRepository;
-import aibe.hosik.common.exception.AccessDeniedException;
-import aibe.hosik.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,12 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,9 +32,7 @@ public class ProfileService {
     private final ReviewRepository reviewRepository;
     private final PostRepository postRepository;
     private final ApplyRepository applyRepository;
-
-    // 파일 업로드 경로 설정
-    private final String uploadDir = "src/main/resources/static/uploads/";
+    private final ProfileStorageService profileStorageService; // 프로필 전용 스토리지 서비스 주입
 
     /**
      * 사용자 ID로 프로필 조회 (기본)
@@ -109,36 +102,26 @@ public class ProfileService {
     }
 
     /**
-     * 프로필 이미지 업로드 및 업데이트
+     * 프로필 이미지 업로드 및 업데이트 (Supabase 사용)
      */
     @Transactional
-    public Profile updateProfileImage(Long userId, MultipartFile imageFile) throws IOException {
+    public Profile updateProfileImage(Long userId, MultipartFile imageFile) throws Exception {
         log.info("Updating profile image for user ID: {}", userId);
         Profile profile = getProfileByUserId(userId);
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            // 기존 이미지가 있다면 삭제
-            if (profile.getImage() != null && !profile.getImage().isEmpty()
-                    && !profile.getImage().contains("default")) {
-                try {
-                    Path oldFilePath = Paths.get(uploadDir + profile.getImage().substring(profile.getImage().lastIndexOf('/') + 1));
-                    Files.deleteIfExists(oldFilePath);
-                } catch (IOException e) {
-                    log.error("Error deleting old profile image: {}", e.getMessage());
-                }
+            try {
+                // ProfileStorageService를 통한 이미지 업로드
+                String imageUrl = profileStorageService.uploadProfileImage(imageFile);
+                log.info("Profile image uploaded to Supabase: {}", imageUrl);
+
+                // 프로필 이미지 URL 업데이트
+                profile.updateImage(imageUrl);
+                return profileRepository.save(profile);
+            } catch (Exception e) {
+                log.error("Failed to upload profile image: {}", e.getMessage());
+                throw new Exception("프로필 이미지 업로드에 실패했습니다: " + e.getMessage());
             }
-
-            // 새 이미지 저장
-            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-            Path targetPath = Paths.get(uploadDir + fileName);
-            Files.createDirectories(targetPath.getParent());
-            Files.copy(imageFile.getInputStream(), targetPath);
-
-            // 이미지 URL 업데이트
-            String imageUrl = "/uploads/" + fileName;
-            profile.updateImage(imageUrl);
-
-            return profileRepository.save(profile);
         }
 
         return profile;

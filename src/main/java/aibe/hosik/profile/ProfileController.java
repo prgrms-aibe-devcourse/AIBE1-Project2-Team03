@@ -1,27 +1,27 @@
 package aibe.hosik.profile;
 
 import aibe.hosik.apply.Apply;
+import aibe.hosik.common.dto.ApiResponse;
+import aibe.hosik.common.exception.ResourceNotFoundException;
 import aibe.hosik.post.Post;
 import aibe.hosik.resume.Resume;
 import aibe.hosik.review.Review;
 import aibe.hosik.review.ReviewService;
 import aibe.hosik.user.User;
 import aibe.hosik.user.UserRepository;
-import aibe.hosik.common.dto.ApiResponse;
-import aibe.hosik.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,9 +183,9 @@ public class ProfileController {
     }
 
     /**
-     * 프로필 이미지 업로드 (모달에서 사용)
+     * 프로필 이미지 업로드 (Supabase 버전)
      */
-    @PostMapping("/image")
+    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadProfileImage(@RequestParam("image") MultipartFile imageFile) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -197,7 +197,7 @@ public class ProfileController {
             Profile updatedProfile = profileService.updateProfileImage(user.getId(), imageFile);
             log.info("Updated profile image for user: {}", email);
             return ResponseEntity.ok(Map.of("image", updatedProfile.getImage()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error uploading profile image for user {}: {}", email, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse(false, e.getMessage()));
