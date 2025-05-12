@@ -16,7 +16,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
 
   public List<ReviewResponse> getAllReviewsByUserId(Long userId) {
-    return reviewRepository.findAllByUserId(userId)
+    return reviewRepository.findAllByRevieweeId(userId)
         .stream()
         .map(ReviewResponse::from)
         .toList();
