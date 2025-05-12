@@ -1,6 +1,7 @@
-package aibe.hosik.analysis;
+package aibe.hosik.resume.entity;
 
-import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.common.TimeEntity;
+import aibe.hosik.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,20 +13,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Analysis {
+public class Resume extends TimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
-  private String result;
+  private String title;
 
   @Column(nullable = false)
-  private String summary;
+  private String content;
 
   @Column(nullable = false)
-  private int score;
+  private boolean isMain;
+
+  @Column
+  private String personality;
+
+  @Column
+  private String portfolio;
+
 
   @ManyToOne(fetch = FetchType.LAZY)
-  private Apply apply;
+  private User user;
 }

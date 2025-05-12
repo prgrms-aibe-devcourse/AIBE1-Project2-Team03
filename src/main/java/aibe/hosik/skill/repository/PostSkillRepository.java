@@ -18,4 +18,6 @@ public interface PostSkillRepository extends JpaRepository<PostSkill, Long> {
     List<String> findSkillByPostId(@Param("postId") Long postId);
 
     void deleteByPostId(Long postId);
+
+    Long post(Post post);
 }

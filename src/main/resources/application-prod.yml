@@ -63,6 +63,14 @@ spring:
     properties:
       hibernate:
         show_sql: true
+  # 비동기 작업 설정
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 10
+        queue-capacity: 100
+      thread-name-prefix: async-
 springdoc:
   swagger-ui:
     enabled: true
@@ -83,3 +91,12 @@ supabase:
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
+
+#gemini 설정
+gemini:
+  model-keys:
+    gemini-1.5-flash-8b: ${GEMINI_MODEL1_KEY}
+    gemini-2.0-flash-lite: ${GEMINI_MODEL2_KEY}
+    gemini-2.0-flash: ${GEMINI_MODEL3_KEY}
+  base-url: https://generativelanguage.googleapis.com/v1beta
+
