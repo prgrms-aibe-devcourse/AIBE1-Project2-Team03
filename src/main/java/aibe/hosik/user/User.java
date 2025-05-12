@@ -13,8 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-// @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,12 +41,16 @@ public class User implements UserDetails {
   private String socialId;
 
   // User와 양방향
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonIgnore
   private Profile profile;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Collections.singleton(new SimpleGrantedAuthority(this.roles.name()));
+  }
+
+  public void linkProfile(Profile profile) {
+    this.profile = profile;
   }
 }
