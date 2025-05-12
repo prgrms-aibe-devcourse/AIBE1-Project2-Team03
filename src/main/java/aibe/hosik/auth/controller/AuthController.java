@@ -8,6 +8,8 @@ import aibe.hosik.auth.dto.SocialLoginRequest;
 import aibe.hosik.user.User;
 import aibe.hosik.user.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "인증/인가 API") // Swagger Tag
 public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authManager;
@@ -34,6 +37,7 @@ public class AuthController {
      * POST /auth/signup
      */
     @PostMapping("/signup")
+    @Operation(summary = "ID/PW 회원가입")
     public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest req) {
         userService.register(req);
         return ResponseEntity.ok("회원가입 완료");
@@ -44,6 +48,7 @@ public class AuthController {
      * POST /auth/login
      */
     @PostMapping("/login")
+    @Operation(summary = "ID/PW 로그인")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
             Authentication auth = authManager.authenticate(
@@ -65,6 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/social")
+    @Operation(summary = "소셜 로그인")
     public ResponseEntity<?> socialLogin(@Valid @RequestBody SocialLoginRequest request) {
         User user = userService.socialLogin(request);
         String token = jwtProvider.generateToken(user.getUsername());
@@ -76,6 +82,7 @@ public class AuthController {
      * PATCH /auth/password
      */
     @PatchMapping("/password")
+    @Operation(summary = "로컬 회원가입 회원용 비밀번호 변경")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody PasswordChangeRequest req) {
         userService.changePassword(req);
         return ResponseEntity.noContent().build();
