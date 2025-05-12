@@ -1,7 +1,10 @@
 package aibe.hosik.resume.dto;
 
+import aibe.hosik.resume.entity.Resume;
+import aibe.hosik.user.User;
+
 /**
- * 자기소개서 요청 DTO - Record 사용
+ * 자기소개서 요청 DTO
  */
 public record ResumeRequest(
         String title,
@@ -10,19 +13,37 @@ public record ResumeRequest(
         String portfolio,
         boolean isMain
 ) {
-    // Record는 자동으로 생성자, getter, equals, hashCode, toString 제공
-
-    // 기본값을 가진 정적 팩토리 메서드
+    /**
+     * 기본값을 가진 정적 팩토리 메서드
+     */
     public static ResumeRequest of(String title, String content) {
         return new ResumeRequest(title, content, null, null, false);
     }
 
-    // 부분적 업데이트를 위한 Builder 메서드
+    /**
+     * Resume 엔티티 생성
+     */
+    public Resume toEntity(User user) {
+        return Resume.baseBuilder()
+                .user(user)
+                .title(title())
+                .content(content())
+                .personality(personality())
+                .portfolio(portfolio())
+                .isMain(isMain())
+                .build();
+    }
+
+    /**
+     * 부분적 업데이트를 위한 Builder 메서드
+     */
     public static Builder builder() {
         return new Builder();
     }
 
-    // Builder 클래스
+    /**
+     * Builder 클래스
+     */
     public static class Builder {
         private String title;
         private String content;
