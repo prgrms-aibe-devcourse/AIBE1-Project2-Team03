@@ -101,11 +101,7 @@ public class PostServiceImpl implements PostService {
   public PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user) {
     String imageUrl = null;
     if (image != null && !image.isEmpty()) {
-      try {
-        imageUrl = storageService.upload(image); // Supabase에 업로드 후 URL 획득
-      } catch (Exception e) {
-        throw new RuntimeException("이미지 업로드 실패", e);
-      }
+      imageUrl = storageService.upload(image); // Supabase에 업로드 후 URL 획득
     }
 
     // toEntity 사용해서 Post 객체 생성
@@ -198,12 +194,8 @@ public class PostServiceImpl implements PostService {
     }
 
     if (image != null && !image.isEmpty()) {
-      try {
-        String imageUrl = storageService.upload(image);
-        post.setImage(imageUrl);
-      } catch (Exception e) {
-        throw new RuntimeException("이미지 업로드 실패", e);
-      }
+      String imageUrl = storageService.upload(image);
+      post.setImage(imageUrl);
     }
 
     // 엔티티 메서드 이용해서 수정

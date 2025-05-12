@@ -10,7 +10,7 @@ import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.resume.entity.Resume;
-import aibe.hosik.resume.repository.ResumeRepository;
+//import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.skill.repository.ResumeSkillRepository;
 import aibe.hosik.user.User;
@@ -31,7 +31,7 @@ public class ApplyService {
 
   private final ApplyRepository applyRepository; // Apply 테이블과 통신하는 레포
   private final PostRepository postRepository; // Post 테이블과 통신
-  private final ResumeRepository resumeRepository; // Resume 테이블과 통신
+//  private final ResumeRepository resumeRepository; // Resume 테이블과 통신
   private final UserRepository userRepository; // User 테이블과 통신
   private final ResumeSkillRepository resumeSkillRepository;
   private final AnalysisRepository analysisRepository;
@@ -48,19 +48,19 @@ public class ApplyService {
     Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("Post not found")); // postId로 모집글 조회
 
-    Resume resume = resumeRepository.findById(resumeId)
-            .orElseThrow(() -> new IllegalArgumentException("Resume not found")); // resumeId로 이력서 조회
+//    Resume resume = resumeRepository.findById(resumeId)
+//            .orElseThrow(() -> new IllegalArgumentException("Resume not found")); // resumeId로 이력서 조회
 
     User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
 
       // 한 번 더 검증 본인의 이력서인지 확인
-      if (!resume.getUser().getId().equals(userId)) {
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
-      }
-
-    Apply apply = Apply.of(post, user, resume, reason);
+//      if (!resume.getUser().getId().equals(userId)) {
+//          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
+//      }
+//todo: 원상복구 필요
+    Apply apply = Apply.of(post, user, null, reason);
     applyRepository.save(apply); // DB에 저장
 
       log.info("AI 분석 시작 - applyId: {}", apply.getId());

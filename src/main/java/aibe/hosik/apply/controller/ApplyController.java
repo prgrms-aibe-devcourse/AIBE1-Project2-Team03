@@ -1,13 +1,13 @@
 package aibe.hosik.apply.controller;
 
+import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
 import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
 import aibe.hosik.apply.dto.ApplyRequest;
-import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
-import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.service.ApplyService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applies")
 @RequiredArgsConstructor
+@Tag(name = "Apply", description = "지원 API") // Swagger Tag
 public class ApplyController {
   private final ApplyService applyService;
 
