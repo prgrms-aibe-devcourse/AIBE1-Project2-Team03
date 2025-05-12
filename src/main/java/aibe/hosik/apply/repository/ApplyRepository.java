@@ -45,4 +45,8 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "WHERE a.post.id = :postId")
     List<Apply> findWithUserResumeAndAnalysisByPostId(@Param("postId") Long postId);
 
+
+    // 분석 결과가 없는 지원서 조회
+    @Query("SELECT a FROM Apply a WHERE NOT EXISTS (SELECT 1 FROM Analysis an WHERE an.apply = a)")
+    List<Apply> findAppliesWithoutAnalysis();
 }
