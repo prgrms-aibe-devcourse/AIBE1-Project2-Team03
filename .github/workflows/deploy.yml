@@ -126,6 +126,9 @@ jobs:
           STORAGE_KEY=${{ secrets.STORAGE_KEY }}
           FRONT_END_REDIRECT=${{ secrets.FRONT_END_REDIRECT }}
           APP_CORS_ALLOWED_ORIGINS=${{ secrets.APP_CORS_ALLOWED_ORIGINS }}
+          GEMINI_MODEL1_KEY=${{ secrets.GEMINI_MODEL1_KEY }}
+          GEMINI_MODEL2_KEY=${{ secrets.GEMINI_MODEL2_KEY }}
+          GEMINI_MODEL3_KEY=${{ secrets.GEMINI_MODEL3_KEY }}
           EOL
           EOF
 

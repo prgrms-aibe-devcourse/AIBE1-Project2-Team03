@@ -139,17 +139,47 @@ public class ApplyService {
         applyRepository.delete(apply);
     }
 
+    /**
+     * 특정 지원서의 매칭 선택 여부를 업데이트하는 메서드.
+     *
+     * @param applyId 선택 여부를 업데이트할 지원서의 ID
+     * @param isselected 선택 여부 상태 (true: 선택됨, false: 선택되지 않음)
+     * @param user 현재 요청을 보낸 사용자 정보
+     * @throws ResponseStatusException 지원서가 존재하지 않거나, 모집글 작성자가 아닌 경우 예외 발생
+     */
     public void updateIsSelected(Long applyId, boolean isselected, User user) {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다"));
+
+        Post post = apply.getPost();
 
         if (!apply.getPost().getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 팀원을 선택할 수 있습니다.");
         }
 
+        boolean previous = apply.isSelected();
+
         // 선택 업데이트
         apply.updateIsSelected(isselected);
         applyRepository.save(apply);
+
+        int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+
+        // 매칭 선택 했을 때
+        if(!previous && isselected) {
+            if(currentCount >= post.getHeadCount()){
+                post.setDone(true);
+                postRepository.save(post);
+            }
+        }
+
+        // 매칭 취소 시 다시 모집 중 전환
+        else if(previous && !isselected) {
+            if(post.isDone() && currentCount < post.getHeadCount()){
+                post.setDone(false);
+                postRepository.save(post);
+            }
+        }
     }
 
 
