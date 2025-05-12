@@ -47,21 +47,21 @@ public class SecurityConfig {
     @Value("${front-end.redirect}")
     private String frontEndRedirect;
 
-    @Value("${app.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+//    @Value("${app.cors.allowed-origins}")
+//    private List<String> allowedOrigins;
+    private final CorsProperties corsProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Cors = {}", allowedOrigins.toString());
+        // log.info("Cors = {}", allowedOrigins.toString());
+        List<String> uniqueOriginsList = new ArrayList<>(new HashSet<>(corsProperties.getAllowedOrigins()));
+        log.info("CORS Origins = {}", uniqueOriginsList);
         http
                 .csrf(csrf -> csrf.disable())
-//                .cors(cors -> cors.disable())
                 .cors(cors ->
                         cors.configurationSource(request -> {
                             CorsConfiguration configuration = new CorsConfiguration();
-                            // 중복 제거를 위해 Set으로 변환 후 다시 List로 변환
-                            Set<String> uniqueOrigins = new HashSet<>(allowedOrigins);
-                            List<String> uniqueOriginsList = new ArrayList<>(uniqueOrigins);
+                            configuration.setAllowedOrigins(uniqueOriginsList);
                             log.info("Cors = {}", uniqueOriginsList.toString());
 
                     configuration.setAllowedOrigins(uniqueOriginsList);

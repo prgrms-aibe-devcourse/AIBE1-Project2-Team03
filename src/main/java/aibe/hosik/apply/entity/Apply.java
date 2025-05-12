@@ -62,4 +62,8 @@ public class Apply extends TimeEntity {
             .reason(reason)
             .build();
   }
+
+  public void updateIsSelected(boolean selected) {
+    this.isSelected = selected;
+  }
 }
