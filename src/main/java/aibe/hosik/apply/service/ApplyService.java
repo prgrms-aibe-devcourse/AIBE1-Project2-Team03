@@ -4,8 +4,7 @@ import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.analysis.repository.AnalysisRepository;
 import aibe.hosik.analysis.service.AnalysisService;
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
-import aibe.hosik.apply.dto.ApplyResumeResponse;
-import aibe.hosik.apply.dto.ApplyUserResponse;
+import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
@@ -74,57 +73,8 @@ public class ApplyService {
       }
   }
 
-
-  /**
-   * 특정 모집글에 지원한 모든 Apply 객체를 조회하는 기능
-   * @param postId 모집글 ID
-   * @return Apply 리스트
-   */
-  public List<Apply> getAppliesByPostId(Long postId) {
-    return applyRepository.findByPostId(postId);
-  }
-
-  /**
-   * 특정 모집글에 지원한 지원자 정보를 요약 형태로 조회하는 기능
-   *
-   * @param postId 모집글 ID
-   * @return ApplyUserResponse 리스트
-   */
-  public List<ApplyUserResponse> getApplyUserResponsesByPostId(Long postId) {
-    List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId);
-    return applies.stream()
-            .map(apply -> {
-              String personality = apply.getResume().getPersonality();
-              String portfolio = apply.getResume().getPortfolio();
-              return new ApplyUserResponse(
-                      apply.getUser().getId(),
-                      apply.getUser().getEmail(),
-                      apply.getUser().getProfile().getNickname(),
-                      apply.getUser().getProfile().getImage(),
-                      apply.getUser().getProfile().getIntroduction(),
-                      personality,
-                      portfolio
-              );
-            })
-            .toList();
-  }
-  /**
-   * 특정 모집글에 지원한 사람들의 자기소개서 전문을 반환하는 기능
-   * (AI 분석용 전체보기 용도)
-   */
-  public List<ApplyResumeResponse> getApplyResumesByPostId(Long postId) {
-    List<Apply> applies = applyRepository.findWithUserAndResumeByPostId(postId);
-    return applies.stream()
-            .map(apply -> new ApplyResumeResponse(
-                    apply.getUser().getId(),
-                    apply.getResume().getId(),
-                    apply.getResume().getContent(),
-                    apply.getResume().getPersonality()
-            ))
-            .toList();
-  }
-
     /**
+     * 지원서 모아보기
      * 지정된 구인 공고 ID에 연결된 지원 데이터를 기반으로, 지원 정보와 이력서에 포함된 스킬 정보를 함께 반환합니다.
      *
      * @param postId 대상 구인 공고 ID
@@ -153,6 +103,55 @@ public class ApplyService {
                 })
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 특정 모집글에 지원한 사람들의 자기소개서 전문을 반환하는 기능
+     * 게시글 상세보기 기능
+     */
+    public ApplyDetailResponseDTO getApplyDetailByApplyId(Long applyId, User user) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+
+        if (!apply.getPost().getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 지원자 정보를 조회할 수 있습니다.");
+        }
+
+        List<String> skills = getSkillsByResumeId(apply.getResume().getId());
+        Analysis analysis = analysisRepository.findLatestByApplyId(applyId).orElse(null);
+
+        return ApplyDetailResponseDTO.from(apply, skills, analysis);
+    }
+
+
+    /**
+     * 주어진 지원서 ID에 해당하는 지원서를 삭제합니다.
+     *
+     * @param applyId 삭제하려는 지원서의 식별자(ID)
+     * @param user    현재 요청을 수행하는 사용자
+     */
+    public void deleteApply(Long applyId, User user) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+
+        if (!apply.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 지원서만 삭제할 수 있습니다.");
+        }
+        applyRepository.delete(apply);
+    }
+
+    public void updateIsSelected(Long applyId, boolean isselected, User user) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다"));
+
+        if (!apply.getPost().getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 팀원을 선택할 수 있습니다.");
+        }
+
+        // 선택 업데이트
+        apply.updateIsSelected(isselected);
+        applyRepository.save(apply);
+    }
+
 
   /**
    * 이력서 ID로 해당 이력서에 연결된 모든 스킬 이름을 조회하는 내부 메서드

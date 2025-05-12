@@ -9,6 +9,7 @@ import aibe.hosik.user.User;
 import java.util.List;
 
 public record ApplyByResumeSkillResponse(
+        Long applyId,
         Long userId,
         Long resumeId,
         String nickname,
@@ -17,6 +18,7 @@ public record ApplyByResumeSkillResponse(
         String personality,
         String portfolioUrl,
         List<String> skills,
+        boolean isSelected,
 
         Integer aiScore,
         String aiReason,
@@ -29,6 +31,7 @@ public record ApplyByResumeSkillResponse(
 
 
         return new ApplyByResumeSkillResponse(
+                apply.getId(),
                 user.getId(),
                 resume.getId(),
                 profile.getNickname(),
@@ -37,6 +40,7 @@ public record ApplyByResumeSkillResponse(
                 resume.getTitle(),
                 resume.getPortfolio(),
                 skills,
+                apply.isSelected(),
                 analysis != null ? analysis.getScore() : null,
                 analysis != null ? analysis.getResult() : null,
                 analysis != null ? analysis.getSummary() : null
