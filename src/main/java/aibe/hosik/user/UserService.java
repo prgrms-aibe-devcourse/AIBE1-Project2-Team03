@@ -56,9 +56,7 @@ public class UserService {
             .nickname(req.name())
             .build();
 
-        user.toBuilder()
-            .profile(profile)
-            .build();
+        user.linkProfile(profile);
 
         userRepository.save(user);
     }
