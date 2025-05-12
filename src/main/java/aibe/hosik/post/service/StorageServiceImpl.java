@@ -1,7 +1,10 @@
 package aibe.hosik.post.service;
 
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +31,7 @@ public class StorageServiceImpl implements StorageService {
     private String bucketName;
 
     @Override
-    public String upload(MultipartFile file) throws Exception {
+    public String upload(MultipartFile file) {
         String uuid = UUID.randomUUID().toString();
         String extension = Optional.ofNullable(file.getContentType())
                 .map(ct -> ct.split("/")[1])
@@ -37,20 +40,26 @@ public class StorageServiceImpl implements StorageService {
         String boundary = "Boundary-%s".formatted(uuid);
         String filename = "%s.%s".formatted(uuid, extension);
 
-        HttpRequest request = HttpRequest.newBuilder()
+      HttpRequest request = null;
+      try {
+        request = HttpRequest.newBuilder()
                 .uri(URI.create("%s/storage/v1/object/%s/%s".formatted(url, bucketName, filename)))
                 .header("Authorization", "Bearer " + accessKey)
                 .header("Content-Type", "multipart/form-data; boundary=" + boundary)
                 .POST(ofMimeMultipartData(file, boundary))
                 .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
             throw new IOException("Supabase upload error: " + response.body());
         }
 
-        return "%s/storage/v1/object/public/%s/%s".formatted(url, bucketName, filename);
+      } catch (IOException | InterruptedException  e) {
+          throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+      }
+
+      return "%s/storage/v1/object/public/%s/%s".formatted(url, bucketName, filename);
     }
 
     private HttpRequest.BodyPublisher ofMimeMultipartData(MultipartFile file, String boundary) throws IOException {
