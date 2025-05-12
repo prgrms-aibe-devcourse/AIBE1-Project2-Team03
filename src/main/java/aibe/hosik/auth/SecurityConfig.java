@@ -5,6 +5,7 @@ import aibe.hosik.user.SocialType;
 import aibe.hosik.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +28,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Log
+@Slf4j
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
@@ -42,16 +47,24 @@ public class SecurityConfig {
     @Value("${front-end.redirect}")
     private String frontEndRedirect;
 
-    @Value("${app.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+//    @Value("${app.cors.allowed-origins}")
+//    private List<String> allowedOrigins;
+    private final CorsProperties corsProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // log.info("Cors = {}", allowedOrigins.toString());
+        List<String> uniqueOriginsList = new ArrayList<>(new HashSet<>(corsProperties.getAllowedOrigins()));
+        log.info("CORS Origins = {}", uniqueOriginsList);
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(allowedOrigins);
+                .cors(cors ->
+                        cors.configurationSource(request -> {
+                            CorsConfiguration configuration = new CorsConfiguration();
+                            configuration.setAllowedOrigins(uniqueOriginsList);
+                            log.info("Cors = {}", uniqueOriginsList.toString());
+
+                    configuration.setAllowedOrigins(uniqueOriginsList);
                     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
                     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
                     configuration.setAllowCredentials(true);
