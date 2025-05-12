@@ -1,5 +1,6 @@
 package aibe.hosik.post.entity;
 
+import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.post.dto.PostPatchDTO;
 import aibe.hosik.post.dto.PostRequestDTO;
@@ -55,11 +56,15 @@ public class Post extends TimeEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
-  
+
   // 양방향 매핑
   @OneToMany(mappedBy = "post")
   @Builder.Default
   private List<PostSkill> postSkills = new ArrayList<>();
+
+  @OneToMany(mappedBy = "post")
+  @Builder.Default
+  private List<Apply> applies = new ArrayList<>();
 
   // 게시글 수정 메서드
   public void updatePatch(PostPatchDTO dto) {
