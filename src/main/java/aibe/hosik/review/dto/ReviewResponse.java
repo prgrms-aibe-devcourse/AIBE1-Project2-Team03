@@ -16,6 +16,12 @@ public record ReviewResponse(
   public static ReviewResponse from(Review review) {
     ProfileResponse profile = ProfileResponse.from(review.getReviewer().getProfile());
     Post post = review.getPost();
-    return new ReviewResponse(review.getId(), review.getContent(), profile, post.getId(), post.getTitle());
+    return new ReviewResponse(
+        review.getId(),
+        review.getContent(),
+        profile,
+        post == null ? null : post.getId(),
+        post == null ? null : post.getTitle()
+    );
   }
 }

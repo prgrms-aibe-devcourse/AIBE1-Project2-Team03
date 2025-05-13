@@ -1,9 +1,6 @@
 package aibe.hosik.post.facade;
 
-import aibe.hosik.post.dto.PostDetailDTO;
-import aibe.hosik.post.dto.PostPatchDTO;
-import aibe.hosik.post.dto.PostRequestDTO;
-import aibe.hosik.post.dto.PostResponseDTO;
+import aibe.hosik.post.dto.*;
 import aibe.hosik.post.service.PostService;
 import aibe.hosik.skill.repository.PostSkillRepository;
 import aibe.hosik.user.User;
@@ -26,6 +23,10 @@ public class PostFacade {
 
     public List<PostResponseDTO> getAllPosts() {
         return postService.getAllPosts();
+    }
+
+    public List<PostTogetherDTO> getAllPostsByTogether(Long revieweeId,User user) {
+        return postService.getAllPostsByTogether(revieweeId, user);
     }
 
 

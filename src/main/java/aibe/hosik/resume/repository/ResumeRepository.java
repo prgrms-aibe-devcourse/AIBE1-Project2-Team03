@@ -22,5 +22,12 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
   List<Resume> findAllByUserId(Long userId);
 
+  @Query("""
+      SELECT r
+      FROM Resume r
+      WHERE r.isMain = true
+      """)
+  List<Resume> findAllMainResumes();
+
   void deleteByIdAndUserId(Long id, Long userId);
 }

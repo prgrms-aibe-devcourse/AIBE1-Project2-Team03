@@ -44,4 +44,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdWithSkills(@Param("id") Long id);
 
     List<Post> findByIsDoneFalseAndEndedAtLessThanEqual(LocalDate today);
+
+    @Query("""
+        SELECT DISTINCT p
+        FROM Post p
+            JOIN FETCH p.applies a
+        WHERE ((p.user.id = :revieweeId AND a.user.id = :userId)
+            OR (p.user.id = :userId AND a.user.id = :revieweeId))
+        AND a.isSelected = true
+        """)
+    List<Post> getAllPostsByTogether(Long revieweeId, Long userId);
 }

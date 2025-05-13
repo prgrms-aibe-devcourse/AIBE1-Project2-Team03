@@ -7,7 +7,7 @@ import aibe.hosik.post.service.PostService;
 import aibe.hosik.profile.dto.ProfileDetailResponse;
 import aibe.hosik.profile.dto.ProfileRequest;
 import aibe.hosik.profile.dto.ProfileResponse;
-import aibe.hosik.resume.dto.ResumeResponse;
+import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.resume.service.ResumeService;
 import aibe.hosik.review.ReviewService;
 import aibe.hosik.review.dto.ReviewResponse;
@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class ProfileController {
     List<PostResponseDTO> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
     List<PostResponseDTO> joinedPosts = postService.getAllPostsJoinedByUser(userId);
     List<ReviewResponse> reviews = reviewService.getAllReviewsByUserId(userId);
-    List<ResumeResponse> resumes = resumeService.getAllResumesByUserId(userId);
+    List<ResumeDetailResponse> resumes = resumeService.getAllResumesByUserId(userId);
 
     ProfileDetailResponse response = ProfileDetailResponse.from(profile, authorPosts, joinedPosts, reviews, resumes);
 
@@ -77,7 +76,7 @@ public class ProfileController {
     List<PostResponseDTO> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
     List<PostResponseDTO> joinedPosts = postService.getAllPostsJoinedByUser(userId);
     List<ReviewResponse> reviews = reviewService.getAllReviewsByUserId(userId);
-    List<ResumeResponse> resumes = resumeService.getAllResumesByUserId(userId);
+    List<ResumeDetailResponse> resumes = resumeService.getAllResumesByUserId(userId);
 
     ProfileDetailResponse response = ProfileDetailResponse.from(profile, authorPosts, joinedPosts, reviews, resumes);
 
