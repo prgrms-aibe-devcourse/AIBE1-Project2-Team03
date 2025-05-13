@@ -10,7 +10,6 @@ import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.resume.entity.Resume;
-//import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.skill.repository.ResumeSkillRepository;
@@ -61,7 +60,7 @@ public class ApplyService {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
       }
 
-    Apply apply = Apply.of(post, user, null, reason);
+    Apply apply = Apply.of(post, user, resume, reason);
     applyRepository.save(apply); // DB에 저장
 
       log.info("AI 분석 시작 - applyId: {}", apply.getId());
@@ -140,17 +139,47 @@ public class ApplyService {
         applyRepository.delete(apply);
     }
 
-    public void updateIsSelected(Long applyId, boolean isSelected, User user) {
+    /**
+     * 특정 지원서의 매칭 선택 여부를 업데이트하는 메서드.
+     *
+     * @param applyId 선택 여부를 업데이트할 지원서의 ID
+     * @param isselected 선택 여부 상태 (true: 선택됨, false: 선택되지 않음)
+     * @param user 현재 요청을 보낸 사용자 정보
+     * @throws ResponseStatusException 지원서가 존재하지 않거나, 모집글 작성자가 아닌 경우 예외 발생
+     */
+    public void updateIsSelected(Long applyId, boolean isselected, User user) {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다"));
+
+        Post post = apply.getPost();
 
         if (!apply.getPost().getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 팀원을 선택할 수 있습니다.");
         }
 
+        boolean previous = apply.isSelected();
+
         // 선택 업데이트
-        apply.updateIsSelected(isSelected);
+        apply.updateIsSelected(isselected);
         applyRepository.save(apply);
+
+        int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+
+        // 매칭 선택 했을 때
+        if(!previous && isselected) {
+            if(currentCount >= post.getHeadCount()){
+                post.setDone(true);
+                postRepository.save(post);
+            }
+        }
+
+        // 매칭 취소 시 다시 모집 중 전환
+        else if(previous && !isselected) {
+            if(post.isDone() && currentCount < post.getHeadCount()){
+                post.setDone(false);
+                postRepository.save(post);
+            }
+        }
     }
 
 

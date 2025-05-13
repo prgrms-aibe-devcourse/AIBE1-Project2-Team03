@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //@EntityGraph(attributePaths = {"postSkills", "postSkills.skill"})
     @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.postSkills ps LEFT JOIN FETCH ps.skill WHERE p.id = :id")
     Optional<Post> findByIdWithSkills(@Param("id") Long id);
+
+    List<Post> findByIsDoneFalseAndEndedAtLessThanEqual(LocalDate today);
 }
