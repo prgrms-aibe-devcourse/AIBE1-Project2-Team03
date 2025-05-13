@@ -1,38 +1,84 @@
 package aibe.hosik.resume.controller;
 
-import aibe.hosik.resume.dto.ResumeDTO;
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
+import aibe.hosik.resume.dto.ResumeRequest;
+import aibe.hosik.resume.dto.ResumeResponse;
+import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.service.ResumeService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/resumes")
 @RequiredArgsConstructor
+@Tag(name = "Resume", description = "자기소개서 API") // Swagger Tag
 public class ResumeController {
   private final ResumeService resumeService;
 
-  @GetMapping("/my-resumes")
-  @SecurityRequirement(name = "JWT")
-  @Operation(summary = "내 이력서 목록 조회", description = "로그인한 사용자의 이력서 목록을 조회합니다.")
-  public ResponseEntity<List<ResumeDTO>> getMyResumes(@AuthenticationPrincipal User user) {
+  @GetMapping("{id}")
+  @Operation(summary = "자기소개서 조회")
+  public ResponseEntity<ResumeResponse> getResume(@PathVariable("id") Long resumeId) {
+    return ResponseEntity.ok(resumeService.getResume(resumeId));
+  }
+
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @Operation(summary = "자기소개서 생성")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void createResume(
+      @RequestPart ResumeRequest request,
+      @RequestParam(required = false) MultipartFile file,
+      @AuthenticationPrincipal User user
+  ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
-    List<ResumeDTO> resumes = resumeService.getResumeByUserId(user.getId());
-    return ResponseEntity.ok(resumes);
+    resumeService.createResume(request, file, user);
+  }
+
+  @PatchMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @Operation(summary = "자기소개서 수정")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateResume(
+      @PathVariable("id") Long resumeId,
+      @RequestPart ResumeRequest request,
+      @RequestParam(required = false) MultipartFile file,
+      @AuthenticationPrincipal User user
+  ) {
+    if (user == null) {
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
+    }
+
+    resumeService.updateResume(resumeId, request, file, user);
+  }
+
+  @DeleteMapping("/{id}")
+  @Operation(summary = "자기소개서 삭제")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteResume(
+      @PathVariable("id") Long resumeId,
+      @AuthenticationPrincipal User user
+  ) {
+    if (user == null) {
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
+    }
+
+    resumeService.deleteResume(resumeId, user);
   }
 }

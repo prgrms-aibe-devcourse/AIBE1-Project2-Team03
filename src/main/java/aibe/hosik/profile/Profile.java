@@ -1,24 +1,22 @@
 package aibe.hosik.profile;
 
 import aibe.hosik.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
+@Setter
 public class Profile {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column
   private String introduction;
 
   @Column
@@ -28,7 +26,11 @@ public class Profile {
   private String nickname;
 
   @OneToOne
-  @JoinColumn(name="user_id")
+  @JoinColumn(name = "user_id")
   @JsonIgnore
   private User user;
+
+  public Profile(User user) {
+    this.user = user;
+  }
 }

@@ -3,6 +3,7 @@ package aibe.hosik.auth;
 import java.io.IOException;
 
 import aibe.hosik.auth.service.CustomUserDetailsService;
+import aibe.hosik.user.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,10 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtTokenProvider.getUsername(token);
 
                 // DB 조회
-                UserDetails userDetatis = customUserDetailsService.loadUserByUsername(username);
+                User user = customUserDetailsService.loadUserByUsername(username);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                        userDetatis, null, userDetatis.getAuthorities()
+                        user, null, user.getAuthorities()
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);

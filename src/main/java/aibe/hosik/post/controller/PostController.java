@@ -1,22 +1,18 @@
 package aibe.hosik.post.controller;
 
-import aibe.hosik.post.dto.*;
-import aibe.hosik.post.entity.Post;
+import aibe.hosik.post.dto.PostDetailDTO;
+import aibe.hosik.post.dto.PostPatchDTO;
+import aibe.hosik.post.dto.PostRequestDTO;
+import aibe.hosik.post.dto.PostResponseDTO;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
 import aibe.hosik.post.facade.PostFacade;
-import aibe.hosik.post.service.PostService;
-import aibe.hosik.skill.repository.PostSkillRepository;
 import aibe.hosik.user.User;
-import aibe.hosik.user.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j

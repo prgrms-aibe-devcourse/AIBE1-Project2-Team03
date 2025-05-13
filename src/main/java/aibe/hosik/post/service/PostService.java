@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface PostService {
   List<PostResponseDTO> getAllPosts();
+  List<PostResponseDTO> getAllPostsCreatedByAuthor(Long userId);
+  List<PostResponseDTO> getAllPostsJoinedByUser(Long userId);
   PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user);
   PostDetailDTO getPostDetail(Long postId);
   void deletePost(Long postId, User user);

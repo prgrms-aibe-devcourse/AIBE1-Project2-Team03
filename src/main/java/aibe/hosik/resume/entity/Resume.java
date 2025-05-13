@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class Resume extends TimeEntity {
   @Id
@@ -25,7 +25,8 @@ public class Resume extends TimeEntity {
   private String content;
 
   @Column(nullable = false)
-  private boolean isMain;
+  @Builder.Default
+  private boolean isMain = false;
 
   @Column
   private String personality;

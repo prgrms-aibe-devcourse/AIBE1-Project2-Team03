@@ -3,6 +3,9 @@ package aibe.hosik.user;
 import aibe.hosik.auth.dto.SignUpRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
 import aibe.hosik.auth.dto.SocialLoginRequest;
+import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.ProfileRepository;
+import aibe.hosik.profile.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +20,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -47,6 +51,13 @@ public class UserService {
             .roles(Role.USER)
             .build();
 
+        Profile profile = Profile.builder()
+            .user(user)
+            .nickname(req.name())
+            .build();
+
+        user.linkProfile(profile);
+
         userRepository.save(user);
     }
 
@@ -54,14 +65,21 @@ public class UserService {
     public User socialLogin(SocialLoginRequest request) {
         return userRepository.findBySocialTypeAndSocialId(request.type(), request.socialId())
             .orElseGet(() -> {
-                User newUser = User.builder()
+                User user = User.builder()
                     .name(request.name())
                     .username(UUID.randomUUID().toString())
                     .socialId(request.socialId())
                     .socialType(request.type())
                     .build();
 
-                return userRepository.save(newUser);
+                Profile profile = Profile.builder()
+                    .user(user)
+                    .nickname(request.name())
+                    .build();
+
+                user.linkProfile(profile);
+
+                return userRepository.save(user);
             });
     }
 
