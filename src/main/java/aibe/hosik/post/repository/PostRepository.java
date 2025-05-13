@@ -13,9 +13,19 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     // Post 조회 시 postSkills, skill 엔티티 즉시 로딩 지정
-    //@EntityGraph(attributePaths = {"postSkills", "postSkills.skill"})
+    @EntityGraph(attributePaths = {"postSkills", "postSkills.skill"})
     @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.postSkills ps LEFT JOIN FETCH ps.skill")
     List<Post> findAllWithSkills();
+
+    @Query("""
+        SELECT DISTINCT p FROM Post p 
+        LEFT JOIN FETCH p.postSkills ps 
+        LEFT JOIN FETCH ps.skill s
+        LEFT JOIN FETCH p.applies a
+        LEFT JOIN FETCH a.user
+        WHERE a.isSelected = true
+        """)
+    List<Post> findAllWithSkillsAndSelectedApplies();
 
     @Query("""
         SELECT DISTINCT p 

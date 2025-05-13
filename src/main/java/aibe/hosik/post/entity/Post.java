@@ -8,6 +8,7 @@ import aibe.hosik.skill.entity.PostSkill;
 import aibe.hosik.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,10 +60,12 @@ public class Post extends TimeEntity {
 
   // 양방향 매핑
   @OneToMany(mappedBy = "post")
+  @BatchSize(size=20)
   @Builder.Default
   private List<PostSkill> postSkills = new ArrayList<>();
 
   @OneToMany(mappedBy = "post")
+  @BatchSize(size=20)
   @Builder.Default
   private List<Apply> applies = new ArrayList<>();
 
