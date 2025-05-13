@@ -3,21 +3,20 @@ package aibe.hosik.apply.dto;
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.profile.Profile;
+import aibe.hosik.resume.dto.ResumeResponse;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.user.User;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record ApplyByResumeSkillResponse(
         Long applyId,
         Long userId,
-        Long resumeId,
+        ResumeResponse resume,
         String nickname,
         String profileImage,
-        String introduction,
-        String personality,
-        String portfolioUrl,
-        List<String> skills,
         boolean isSelected,
 
         Integer aiScore,
@@ -27,23 +26,19 @@ public record ApplyByResumeSkillResponse(
     public static ApplyByResumeSkillResponse from(Apply apply, List<String> skills, Analysis analysis) {
         User user = apply.getUser();
         Profile profile = user.getProfile();
-        Resume resume = apply.getResume();
+        ResumeResponse resume = ResumeResponse.from(  apply.getResume());
 
 
-        return new ApplyByResumeSkillResponse(
-                apply.getId(),
-                user.getId(),
-                resume.getId(),
-                profile.getNickname(),
-                profile.getImage(),
-                profile.getIntroduction(),
-                resume.getTitle(),
-                resume.getPortfolio(),
-                skills,
-                apply.isSelected(),
-                analysis != null ? analysis.getScore() : null,
-                analysis != null ? analysis.getResult() : null,
-                analysis != null ? analysis.getSummary() : null
-        );
+        return ApplyByResumeSkillResponse.builder()
+            .applyId(apply.getId())
+            .userId(user.getId())
+            .resume(resume)
+            .nickname(profile.getNickname())
+            .profileImage(profile.getImage())
+            .isSelected(apply.isSelected())
+            .aiScore(analysis != null ? analysis.getScore() : null)
+            .aiReason(analysis != null ? analysis.getResult() : null)
+            .aiSummary(analysis != null ? analysis.getSummary() : null)
+            .build();
     }
 }
