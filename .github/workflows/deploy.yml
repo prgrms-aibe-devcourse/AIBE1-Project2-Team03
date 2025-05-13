@@ -138,18 +138,23 @@ jobs:
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << EOF
           cd ~/teamo
 
-          # 디렉토리 구조 확인
-          mkdir -p ./nginx/certbot
-          mkdir -p ./nginx/www
-          
-          # 기존 컨테이너 중지
-          docker rm -f teamo certbot || true
-          
           # 최신 이미지 가져오기
           docker pull hosiki/teamo:latest
+    
+          # Spring Boot 서비스만 먼저 재시작
+          docker-compose stop teamo
+          docker-compose rm -f teamo
+          docker-compose up -d teamo
           
-          # 서비스 시작
-          docker-compose up -d
+          # Spring Boot 애플리케이션 시작 대기
+          echo "Spring Boot 애플리케이션 시작 대기 중..."
+          sleep 20
+          
+          # Nginx 재시작 (Spring Boot 서비스에 의존)
+          docker-compose restart nginx
+          
+          # 컨테이너 상태 확인
+          docker ps
           
           # 불필요한 이미지 정리
           docker image prune -f
