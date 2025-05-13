@@ -100,6 +100,14 @@ public class PostServiceImpl implements PostService {
         }).collect(Collectors.toList());
   }
 
+  @Override
+  public List<PostTogetherDTO> getAllPostsByTogether(Long revieweeId, User user) {
+    return postRepository.getAllPostsByTogether(revieweeId, user.getId())
+        .stream()
+        .map(post-> new PostTogetherDTO(post.getId(),post.getTitle()))
+        .toList();
+  }
+
   /**
    * 새로운 게시글을 생성하고 저장하는 메서드입니다.
    *

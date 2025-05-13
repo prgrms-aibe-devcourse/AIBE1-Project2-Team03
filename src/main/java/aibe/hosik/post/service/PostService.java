@@ -1,9 +1,6 @@
 package aibe.hosik.post.service;
 
-import aibe.hosik.post.dto.PostDetailDTO;
-import aibe.hosik.post.dto.PostPatchDTO;
-import aibe.hosik.post.dto.PostRequestDTO;
-import aibe.hosik.post.dto.PostResponseDTO;
+import aibe.hosik.post.dto.*;
 import aibe.hosik.user.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +10,7 @@ public interface PostService {
   List<PostResponseDTO> getAllPosts();
   List<PostResponseDTO> getAllPostsCreatedByAuthor(Long userId);
   List<PostResponseDTO> getAllPostsJoinedByUser(Long userId);
+  List<PostTogetherDTO> getAllPostsByTogether(Long revieweeId, User user);
   PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user);
   PostDetailDTO getPostDetail(Long postId);
   void deletePost(Long postId, User user);

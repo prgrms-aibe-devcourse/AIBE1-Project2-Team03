@@ -5,6 +5,7 @@ import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.service.StorageService;
 import aibe.hosik.resume.dto.ResumeRequest;
 import aibe.hosik.resume.dto.ResumeDetailResponse;
+import aibe.hosik.resume.dto.ResumeResponse;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
@@ -73,10 +74,10 @@ public class ResumeService {
         .toList();
   }
 
-  public List<ResumeDetailResponse> getAllMainResumes() {
+  public List<ResumeResponse> getAllMainResumes() {
     return resumeRepository.findAllMainResumes()
         .stream()
-        .map(ResumeDetailResponse::from)
+        .map(ResumeResponse::from)
         .toList();
   }
 

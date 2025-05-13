@@ -1,6 +1,7 @@
 package aibe.hosik.review;
 
 import aibe.hosik.review.dto.ReviewRequest;
+import aibe.hosik.review.dto.ReviewResponse;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -8,15 +9,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Slf4j
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
-@Tag(name = "Post", description = "모집글 API") // Swagger Tag
+@Tag(name = "Review", description = "리뷰 API") // Swagger Tag
 public class ReviewController {
   private final ReviewService reviewService;
 
@@ -33,7 +37,23 @@ public class ReviewController {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
 
+
     reviewService.createReview(request, revieweeId, user);
+  }
+
+  @SecurityRequirement(name = "JWT")
+  @Operation(summary = "리뷰 목록 조회")
+  @GetMapping("{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public ResponseEntity<List<ReviewResponse>> getAllReviewsByUserId(
+      @PathVariable("id") Long userId,
+      @AuthenticationPrincipal User user
+  ) {
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
+
+    return ResponseEntity.ok(reviewService.getAllReviewsByUserId(userId));
   }
 
   @SecurityRequirement(name = "JWT")

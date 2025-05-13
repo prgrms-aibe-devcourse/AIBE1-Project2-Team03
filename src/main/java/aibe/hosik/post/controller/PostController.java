@@ -1,9 +1,6 @@
 package aibe.hosik.post.controller;
 
-import aibe.hosik.post.dto.PostDetailDTO;
-import aibe.hosik.post.dto.PostPatchDTO;
-import aibe.hosik.post.dto.PostRequestDTO;
-import aibe.hosik.post.dto.PostResponseDTO;
+import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
 import aibe.hosik.post.facade.PostFacade;
@@ -87,6 +84,17 @@ public class PostController {
   @GetMapping("/{postId}")
   public ResponseEntity<PostDetailDTO> getPostDetail(@PathVariable Long postId){
     return ResponseEntity.ok(postFacade.getPostDetail(postId));
+  }
+
+  @SecurityRequirement(name = "JWT")
+  @Operation(summary="함께한 모집글 목록 조회", description="함께한 게시글을 상세 조회합니다")
+  @GetMapping("/{userId}/together")
+  public ResponseEntity<List<PostTogetherDTO>> getAllPostsByTogether(@PathVariable Long userId, @AuthenticationPrincipal User user){
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+    }
+
+    return ResponseEntity.ok(postFacade.getAllPostsByTogether(userId, user));
   }
 
   @SecurityRequirement(name = "JWT")

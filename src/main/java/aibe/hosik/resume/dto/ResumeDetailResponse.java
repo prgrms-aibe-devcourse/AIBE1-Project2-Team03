@@ -1,6 +1,7 @@
 package aibe.hosik.resume.dto;
 
 
+import aibe.hosik.profile.dto.ProfileResponse;
 import aibe.hosik.resume.entity.Resume;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public record ResumeDetailResponse(
     String portfolio,
     boolean isMain,
     List<String> skills,
-    Long userId
+    ProfileResponse profile
 ) {
   public static ResumeDetailResponse from(Resume resume) {
     return new ResumeDetailResponse(
@@ -27,7 +28,7 @@ public record ResumeDetailResponse(
             .stream()
             .map(resumeSkill -> resumeSkill.getSkill().getName())
             .toList(),
-        resume.getUser().getId()
+        ProfileResponse.from(resume.getUser().getProfile())
     );
   }
 }
