@@ -1,6 +1,9 @@
 package aibe.hosik.resume.controller;
 
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.resume.dto.ResumeRequest;
+import aibe.hosik.resume.dto.ResumeResponse;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.service.ResumeService;
 import aibe.hosik.user.User;
@@ -28,19 +31,41 @@ import java.util.Map;
 public class ResumeController {
   private final ResumeService resumeService;
 
+  @GetMapping("{id}")
+  @Operation(summary = "자기소개서 조회")
+  public ResponseEntity<ResumeResponse> getResume(@PathVariable("id") Long resumeId) {
+    return ResponseEntity.ok(resumeService.getResume(resumeId));
+  }
+
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "자기소개서 생성")
   @ResponseStatus(HttpStatus.CREATED)
   public void createResume(
       @RequestPart ResumeRequest request,
-      @RequestParam("file") MultipartFile file,
+      @RequestParam(required = false) MultipartFile file,
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     resumeService.createResume(request, file, user);
+  }
+
+  @PatchMapping(value = "{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @Operation(summary = "자기소개서 수정")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateResume(
+      @PathVariable("id") Long resumeId,
+      @RequestPart ResumeRequest request,
+      @RequestParam(required = false) MultipartFile file,
+      @AuthenticationPrincipal User user
+  ) {
+    if (user == null) {
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
+    }
+
+    resumeService.updateResume(resumeId, request, file, user);
   }
 
   @DeleteMapping("/{id}")
@@ -51,7 +76,7 @@ public class ResumeController {
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     resumeService.deleteResume(resumeId, user);

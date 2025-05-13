@@ -26,12 +26,18 @@ public class ResumeService {
 
   public void createResume(ResumeRequest request, MultipartFile file, User user) {
     if (request.isMain()) {
-      resumeRepository.resetMainResumeFlag();
+      resumeRepository.resetMainResumeFlag(user.getId());
     }
 
-    String portfolio = storageService.upload(file);
+    String portfolio = file == null ? null : storageService.upload(file);
 
     resumeRepository.save(request.toEntity(portfolio, user));
+  }
+
+  public ResumeResponse getResume(Long id) {
+    Resume resume = resumeRepository.findById(id)
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESUME));
+    return ResumeResponse.from(resume);
   }
 
   public List<ResumeResponse> getAllResumesByUserId(Long userId) {
@@ -44,14 +50,19 @@ public class ResumeService {
   public void updateResume(Long resumeId, ResumeRequest request, MultipartFile file, User user) {
     Resume resume = resumeRepository.findByIdAndUserId(resumeId, user.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESUME));
+    resumeRepository.resetMainResumeFlag(user.getId());
 
-    resumeRepository.resetMainResumeFlag();
+    String portfolio = file == null ? resume.getPortfolio() : storageService.upload(file);
 
-    Resume mainResume = resume.toBuilder()
-        .isMain(true)
+    Resume updated = resume.toBuilder()
+        .title(request.title())
+        .content(request.content())
+        .personality(request.personality())
+        .portfolio(portfolio)
+        .isMain(request.isMain())
         .build();
 
-    resumeRepository.save(mainResume);
+    resumeRepository.save(updated);
   }
 
   public void deleteResume(Long resumeId, User user) {

@@ -29,7 +29,7 @@ public class ProfileService {
     Profile profile = profileRepository.findById(profileId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PROFILE));
 
-    String profileImage = storageService.upload(image);
+    String profileImage = image == null ? profile.getImage() : storageService.upload(image);
 
     Profile updated = profile.toBuilder()
         .nickname(request.nickname())

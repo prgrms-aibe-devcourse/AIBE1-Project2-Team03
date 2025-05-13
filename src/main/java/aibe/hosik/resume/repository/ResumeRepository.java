@@ -2,6 +2,7 @@ package aibe.hosik.resume.repository;
 
 import aibe.hosik.resume.entity.Resume;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -10,12 +11,14 @@ import java.util.Optional;
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
   List<Resume> findByUserId(Long userId);
 
+  @Modifying
   @Query("""
       UPDATE Resume r
-      SET isMain = false
-      WHERE isMain = true
+      SET r.isMain = false
+      WHERE r.isMain = true
+      AND r.user.id = :userId
       """)
-  void resetMainResumeFlag();
+  void resetMainResumeFlag(Long userId);
 
   Optional<Resume> findByIdAndUserId(Long id, Long userId);
 

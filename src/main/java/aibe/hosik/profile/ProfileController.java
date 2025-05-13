@@ -1,5 +1,7 @@
 package aibe.hosik.profile;
 
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.dto.PostResponseDTO;
 import aibe.hosik.post.service.PostService;
 import aibe.hosik.profile.dto.ProfileDetailResponse;
@@ -42,9 +44,9 @@ public class ProfileController {
   @SecurityRequirement(name = "JWT")
   @Operation(summary = "마이프로필 조회")
   @GetMapping("me")
-  public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal User user) {
+  public ResponseEntity<ProfileDetailResponse> getMyProfile(@AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     Long userId = user.getId();
@@ -63,12 +65,12 @@ public class ProfileController {
   @SecurityRequirement(name = "JWT")
   @Operation(summary = "다른 사용자 프로필 조회")
   @GetMapping("{id}")
-  public ResponseEntity<?> getProfile(
+  public ResponseEntity<ProfileDetailResponse> getProfile(
       @PathVariable("id") Long userId,
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     ProfileResponse profile = profileService.getProfileByUserId(userId);
@@ -84,15 +86,15 @@ public class ProfileController {
 
   @SecurityRequirement(name = "JWT")
   @Operation(summary = "프로필 수정")
-  @PatchMapping
+  @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void updateProfile(
       @RequestPart ProfileRequest request,
-      @RequestPart MultipartFile image,
+      @RequestPart(required = false) MultipartFile image,
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     profileService.updateProfile(request, image, user.getProfile().getId());
