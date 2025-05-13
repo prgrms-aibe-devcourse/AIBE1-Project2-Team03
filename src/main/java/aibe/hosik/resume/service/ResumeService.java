@@ -7,6 +7,10 @@ import aibe.hosik.resume.dto.ResumeRequest;
 import aibe.hosik.resume.dto.ResumeResponse;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.repository.ResumeRepository;
+import aibe.hosik.skill.entity.ResumeSkill;
+import aibe.hosik.skill.entity.Skill;
+import aibe.hosik.skill.repository.ResumeSkillRepository;
+import aibe.hosik.skill.repository.SkillRepository;
 import aibe.hosik.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -22,6 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeService {
   private final ResumeRepository resumeRepository;
+  private final ResumeSkillRepository resumeSkillRepository;
+  private final SkillRepository skillRepository;
   private final StorageService storageService;
 
   public void createResume(ResumeRequest request, MultipartFile file, User user) {
@@ -30,8 +37,27 @@ public class ResumeService {
     }
 
     String portfolio = file == null ? null : storageService.upload(file);
+    Resume resume = request.toEntity(portfolio, user);
+    Resume saved = resumeRepository.save(resume);
 
-    resumeRepository.save(request.toEntity(portfolio, user));
+    List<String> skills = new ArrayList<>();
+
+    for (String skillName : request.skills()) {
+      Skill skill = skillRepository.findByName(skillName)
+          .orElseGet(() -> skillRepository.save(Skill.builder().name(skillName).build()));
+
+      ResumeSkill resumeSkill = ResumeSkill.builder()
+          .resume(saved)
+          .skill(skill)
+          .build();
+
+      // post-skill 연관관계 추가
+      resumeSkillRepository.save(resumeSkill);
+      // 응답 DTO 스킬 저장
+      skills.add(skill.getName());
+    }
+
+    resumeRepository.save(resume);
   }
 
   public ResumeResponse getResume(Long id) {
@@ -53,6 +79,23 @@ public class ResumeService {
     resumeRepository.resetMainResumeFlag(user.getId());
 
     String portfolio = file == null ? resume.getPortfolio() : storageService.upload(file);
+
+    List<String> skills = new ArrayList<>();
+
+    for (String skillName : request.skills()) {
+      Skill skill = skillRepository.findByName(skillName)
+          .orElseGet(() -> skillRepository.save(Skill.builder().name(skillName).build()));
+
+      ResumeSkill resumeSkill = ResumeSkill.builder()
+          .resume(resume)
+          .skill(skill)
+          .build();
+
+      // post-skill 연관관계 추가
+      resumeSkillRepository.save(resumeSkill);
+      // 응답 DTO 스킬 저장
+      skills.add(skill.getName());
+    }
 
     Resume updated = resume.toBuilder()
         .title(request.title())
