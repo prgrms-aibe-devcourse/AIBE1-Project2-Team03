@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,16 +43,28 @@ public class PostServiceImpl implements PostService {
     // findAllWithSkills로 한 번에 fetch(post, postSkills, skill)
     List<Post> posts = postRepository.findAllWithSkills();
 
+    // 모든 게시글의 선택된 지원자 수를 한 번에 조회
+    List<Map<String, Object>> applyCounts = applyRepository.countSelectedAppliesByPostId();
+
+    // postId -> count 매핑을 생성
+    Map<Long, Integer> postIdToCountMap = applyCounts.stream()
+            .collect(Collectors.toMap(
+                    map -> ((Number) map.get("postId")).longValue(),
+                    map -> ((Number) map.get("count")).intValue()
+            ));
+
     return posts.stream()
-        .map(post -> {
-          // fetch된 postSkills에서 skill 추출
-          List<String> skills = skillRepository.findByPostId(post.getId());
+            .map(post -> {
+              // 이미 로딩된 postSkills에서 skill 이름 추출
+              List<String> skills = post.getPostSkills().stream()
+                      .map(ps -> ps.getSkill().getName())
+                      .collect(Collectors.toList());
 
-          int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+              int currentCount = postIdToCountMap.getOrDefault(post.getId(), 0);
 
-          // DTO 정적 팩토리 메서드 활용
-          return PostResponseDTO.from(post, skills, currentCount);
-        }).collect(Collectors.toList());
+              return PostResponseDTO.from(post, skills, currentCount);
+            }).collect(Collectors.toList());
+
   }
 
   @Override

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
@@ -29,6 +30,9 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
      * @return 선정된 지원자 수
      */
     int countByPostIdAndIsSelectedTrue(Long postId);
+
+    @Query("SELECT a.post.id as postId, COUNT(a) as count FROM Apply a WHERE a.isSelected = true GROUP BY a.post.id")
+    List<Map<String, Object>> countSelectedAppliesByPostId();
 
     /**
      * 특정 모집글에 지원한 지원자들과 그들의 이력서, 프로필 및 분석 결과를 함께 조회한다.
