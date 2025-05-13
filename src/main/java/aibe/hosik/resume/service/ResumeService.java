@@ -66,6 +66,7 @@ public class ResumeService {
   }
 
   public void deleteResume(Long resumeId, User user) {
+    System.out.println(1);
     resumeRepository.deleteByIdAndUserId(resumeId, user.getId());
   }
 }
