@@ -1,12 +1,16 @@
 package aibe.hosik.resume.entity;
 
 import aibe.hosik.common.TimeEntity;
+import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -34,7 +38,9 @@ public class Resume extends TimeEntity {
   @Column
   private String portfolio;
 
-
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
+
+  @OneToMany(mappedBy = "resume")
+  private List<ResumeSkill> resumeSkills = new ArrayList<>();
 }
