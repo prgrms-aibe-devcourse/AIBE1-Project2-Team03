@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,6 +31,12 @@ import java.util.Map;
 @Tag(name = "Resume", description = "자기소개서 API") // Swagger Tag
 public class ResumeController {
   private final ResumeService resumeService;
+
+  @GetMapping
+  @Operation(summary = "자기소개서 목록 조회")
+  public ResponseEntity<List<ResumeResponse> > getAllResumes(@AuthenticationPrincipal User user) {
+    return ResponseEntity.ok(resumeService.getAllResumesByUserId(user.getId()));
+  }
 
   @GetMapping("{id}")
   @Operation(summary = "자기소개서 조회")

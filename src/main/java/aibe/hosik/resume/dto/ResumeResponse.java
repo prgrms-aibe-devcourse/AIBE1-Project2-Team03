@@ -9,7 +9,8 @@ public record ResumeResponse(
     String content,
     String personality,
     String portfolio,
-    boolean isMain
+    boolean isMain,
+    Long userId
 ) {
   public static ResumeResponse from(Resume resume) {
     return new ResumeResponse(
@@ -18,7 +19,8 @@ public record ResumeResponse(
         resume.getContent(),
         resume.getPersonality(),
         resume.getPortfolio(),
-        resume.isMain()
+        resume.isMain(),
+        resume.getUser().getId()
     );
   }
 }
