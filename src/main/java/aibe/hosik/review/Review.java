@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class Review extends TimeEntity {
   @Id

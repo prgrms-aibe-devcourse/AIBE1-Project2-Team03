@@ -1,5 +1,6 @@
 package aibe.hosik.post.dto;
 
+import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
@@ -23,12 +24,13 @@ public record PostDetailDTO(
 
         // 현재 선택된 목록 보여주기
         List<MatchedUserDTO> matchedUsers,
+        List<Long> applies,
         int currentCount,
 
         Long userId
 ) {
     public static PostDetailDTO from(Post post, List<String> skills, List<MatchedUserDTO> matchedUsers, int currentCount) {
-    return new PostDetailDTO(
+        return new PostDetailDTO(
             post.getId(),
             post.getTitle(),
             post.getContent(),
@@ -40,7 +42,11 @@ public record PostDetailDTO(
             post.getType().toString(),
             skills,
             matchedUsers,
+            post.getApplies()
+                .stream()
+                .map(apply -> apply.getUser().getId()
+                ).toList(),
             currentCount,
             post.getUser().getId()
-    );
+        );
 }}

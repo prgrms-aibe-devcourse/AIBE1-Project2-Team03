@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
-  List<Resume> findByUserId(Long userId);
-
   @Modifying
   @Query("""
       UPDATE Resume r

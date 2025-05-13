@@ -58,7 +58,6 @@ public class Apply extends TimeEntity {
             .post(post)
             .user(user)
             .resume(resume)
-            .isSelected(false)
             .reason(reason)
             .build();
   }
