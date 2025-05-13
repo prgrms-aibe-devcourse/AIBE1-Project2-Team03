@@ -3,8 +3,7 @@ package aibe.hosik.resume.controller;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.resume.dto.ResumeRequest;
-import aibe.hosik.resume.dto.ResumeResponse;
-import aibe.hosik.resume.entity.Resume;
+import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.resume.service.ResumeService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,15 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -34,13 +29,19 @@ public class ResumeController {
 
   @GetMapping
   @Operation(summary = "자기소개서 목록 조회")
-  public ResponseEntity<List<ResumeResponse> > getAllResumes(@AuthenticationPrincipal User user) {
+  public ResponseEntity<List<ResumeDetailResponse>> getAllResumes(@AuthenticationPrincipal User user) {
     return ResponseEntity.ok(resumeService.getAllResumesByUserId(user.getId()));
+  }
+
+  @GetMapping("main")
+  @Operation(summary = "대표 자기소개서 목록 조회")
+  public ResponseEntity<List<ResumeDetailResponse>> getAllMainResumes() {
+    return ResponseEntity.ok(resumeService.getAllMainResumes());
   }
 
   @GetMapping("{id}")
   @Operation(summary = "자기소개서 조회")
-  public ResponseEntity<ResumeResponse> getResume(@PathVariable("id") Long resumeId) {
+  public ResponseEntity<ResumeDetailResponse> getResume(@PathVariable("id") Long resumeId) {
     return ResponseEntity.ok(resumeService.getResume(resumeId));
   }
 

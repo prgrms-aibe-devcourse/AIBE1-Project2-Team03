@@ -3,8 +3,7 @@ package aibe.hosik.apply.dto;
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.profile.Profile;
-import aibe.hosik.resume.dto.ResumeResponse;
-import aibe.hosik.resume.entity.Resume;
+import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.user.User;
 import lombok.Builder;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public record ApplyByResumeSkillResponse(
         Long applyId,
         Long userId,
-        ResumeResponse resume,
+        ResumeDetailResponse resume,
         String nickname,
         String profileImage,
         boolean isSelected,
@@ -26,7 +25,7 @@ public record ApplyByResumeSkillResponse(
     public static ApplyByResumeSkillResponse from(Apply apply, List<String> skills, Analysis analysis) {
         User user = apply.getUser();
         Profile profile = user.getProfile();
-        ResumeResponse resume = ResumeResponse.from(  apply.getResume());
+        ResumeDetailResponse resume = ResumeDetailResponse.from(  apply.getResume());
 
 
         return ApplyByResumeSkillResponse.builder()

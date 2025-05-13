@@ -4,7 +4,7 @@ import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.service.StorageService;
 import aibe.hosik.resume.dto.ResumeRequest;
-import aibe.hosik.resume.dto.ResumeResponse;
+import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
@@ -60,16 +60,23 @@ public class ResumeService {
     resumeRepository.save(resume);
   }
 
-  public ResumeResponse getResume(Long id) {
+  public ResumeDetailResponse getResume(Long id) {
     Resume resume = resumeRepository.findById(id)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESUME));
-    return ResumeResponse.from(resume);
+    return ResumeDetailResponse.from(resume);
   }
 
-  public List<ResumeResponse> getAllResumesByUserId(Long userId) {
+  public List<ResumeDetailResponse> getAllResumesByUserId(Long userId) {
     return resumeRepository.findAllByUserId(userId)
         .stream()
-        .map(ResumeResponse::from)
+        .map(ResumeDetailResponse::from)
+        .toList();
+  }
+
+  public List<ResumeDetailResponse> getAllMainResumes() {
+    return resumeRepository.findAllMainResumes()
+        .stream()
+        .map(ResumeDetailResponse::from)
         .toList();
   }
 

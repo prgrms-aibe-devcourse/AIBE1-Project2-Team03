@@ -5,7 +5,7 @@ import aibe.hosik.resume.entity.Resume;
 
 import java.util.List;
 
-public record ResumeResponse(
+public record ResumeDetailResponse(
     Long id,
     String title,
     String content,
@@ -15,8 +15,8 @@ public record ResumeResponse(
     List<String> skills,
     Long userId
 ) {
-  public static ResumeResponse from(Resume resume) {
-    return new ResumeResponse(
+  public static ResumeDetailResponse from(Resume resume) {
+    return new ResumeDetailResponse(
         resume.getId(),
         resume.getTitle(),
         resume.getContent(),
