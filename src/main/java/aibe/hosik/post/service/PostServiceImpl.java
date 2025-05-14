@@ -1,6 +1,7 @@
 package aibe.hosik.post.service;
 
 import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.Post;
@@ -11,7 +12,6 @@ import aibe.hosik.skill.repository.SkillRepository;
 import aibe.hosik.skill.entity.PostSkill;
 import aibe.hosik.skill.entity.Skill;
 import aibe.hosik.user.User;
-import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class PostServiceImpl implements PostService {
     List<Post> posts = postRepository.findAllWithSkills();
 
     // 모든 게시글의 선택된 지원자 수를 한 번에 조회
-    List<Map<String, Object>> applyCounts = applyRepository.countSelectedAppliesByPostId();
+    List<Map<String, Object>> applyCounts = applyRepository.countSelectedAppliesByPostId(PassStatus.PASS);
 
     // postId -> count 매핑을 생성
     Map<Long, Integer> postIdToCountMap = applyCounts.stream()
@@ -77,7 +77,7 @@ public class PostServiceImpl implements PostService {
           // fetch된 postSkills에서 skill 추출
           List<String> skills = skillRepository.findByPostId(post.getId());
 
-          int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+          int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
 
           // DTO 정적 팩토리 메서드 활용
           return PostResponseDTO.from(post, skills, currentCount);
@@ -86,14 +86,14 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public List<PostResponseDTO> getAllPostsJoinedByUser(Long userId) {
-    List<Post> posts = postRepository.findAllJoinedByUser(userId);
+    List<Post> posts = postRepository.findAllJoinedByUser(userId,PassStatus.PASS);
 
     return posts.stream()
         .map(post -> {
           // fetch된 postSkills에서 skill 추출
           List<String> skills = skillRepository.findByPostId(post.getId());
 
-          int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+          int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
 
           // DTO 정적 팩토리 메서드 활용
           return PostResponseDTO.from(post, skills, currentCount);
@@ -102,7 +102,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public List<PostTogetherDTO> getAllPostsByTogether(Long revieweeId, User user) {
-    return postRepository.getAllPostsByTogether(revieweeId, user.getId())
+    return postRepository.getAllPostsByTogether(revieweeId, user.getId(),PassStatus.PASS)
         .stream()
         .map(post-> new PostTogetherDTO(post.getId(),post.getTitle()))
         .toList();
@@ -246,13 +246,13 @@ public class PostServiceImpl implements PostService {
     }
 
     // 수정 X
-    int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(postId);
+    int currentCount = applyRepository.countByPostIdAndIsSelected(postId,PassStatus.PASS);
     return PostResponseDTO.from(post, skills, currentCount);
   }
 
   // 현재 매칭된 사람 정보 조회
   private List<MatchedUserDTO> findMatchedUsers(Long postId) {
-    List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId);
+    List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId, PassStatus.PASS);
 
     return applies.stream()
         .map(apply -> {

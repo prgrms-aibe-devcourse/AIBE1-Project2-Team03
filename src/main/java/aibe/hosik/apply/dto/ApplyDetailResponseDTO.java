@@ -2,6 +2,7 @@ package aibe.hosik.apply.dto;
 
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.profile.Profile;
 import aibe.hosik.resume.entity.Resume;
@@ -19,7 +20,7 @@ public record ApplyDetailResponseDTO(
 
         // apply
         String reason,
-        boolean isSelected,
+        PassStatus isSelected,
         LocalDateTime applyAt,
 
         // resume
@@ -48,7 +49,7 @@ public record ApplyDetailResponseDTO(
                 profile.getImage(),
 
                 apply.getReason(),
-                apply.isSelected(),
+                apply.getIsSelected(),
                 apply.getCreatedAt(),
 
                 resume.getId(),

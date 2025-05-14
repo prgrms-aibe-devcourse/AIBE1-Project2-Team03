@@ -1,5 +1,6 @@
 package aibe.hosik.resume.service;
 
+import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.service.StorageService;
@@ -30,6 +31,8 @@ public class ResumeService {
   private final ResumeRepository resumeRepository;
   private final ResumeSkillRepository resumeSkillRepository;
   private final SkillRepository skillRepository;
+  private final ApplyRepository applyRepository;
+
   private final StorageService storageService;
 
   public void createResume(ResumeRequest request, MultipartFile file, User user) {
@@ -117,7 +120,9 @@ public class ResumeService {
   }
 
   public void deleteResume(Long resumeId, User user) {
-    System.out.println(1);
-    resumeRepository.deleteByIdAndUserId(resumeId, user.getId());
+    Resume resume = resumeRepository.findByIdAndUserId(resumeId, user.getId())
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESUME));
+
+    resumeRepository.delete(resume);
   }
 }

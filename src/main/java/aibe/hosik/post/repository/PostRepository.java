@@ -1,5 +1,6 @@
 package aibe.hosik.post.repository;
 
+import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.post.entity.Post;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,15 +18,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.postSkills ps LEFT JOIN FETCH ps.skill")
     List<Post> findAllWithSkills();
 
-    @Query("""
-        SELECT DISTINCT p FROM Post p 
-        LEFT JOIN FETCH p.postSkills ps 
-        LEFT JOIN FETCH ps.skill s
-        LEFT JOIN FETCH p.applies a
-        LEFT JOIN FETCH a.user
-        WHERE a.isSelected = true
-        """)
-    List<Post> findAllWithSkillsAndSelectedApplies();
+//    @Query("""
+//        SELECT DISTINCT p FROM Post p
+//        LEFT JOIN FETCH p.postSkills ps
+//        LEFT JOIN FETCH ps.skill s
+//        LEFT JOIN FETCH p.applies a
+//        LEFT JOIN FETCH a.user
+//        WHERE a.isSelected = true
+//        """)
+//    List<Post> findAllWithSkillsAndSelectedApplies();
 
     @Query("""
         SELECT DISTINCT p 
@@ -33,10 +34,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             LEFT JOIN FETCH p.postSkills ps
             LEFT JOIN FETCH p.user u
             JOIN p.applies a
-        WHERE a.isSelected = true
-        OR u.id = :userId
+        WHERE a.isSelected = :status
+        OR a.user.id = :userId
         """)
-    List<Post> findAllJoinedByUser(Long userId);
+    List<Post> findAllJoinedByUser(Long userId,PassStatus status);
 
     // PostDetail 조회 시 즉시 로딩 지정
     //@EntityGraph(attributePaths = {"postSkills", "postSkills.skill"})
@@ -51,7 +52,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             JOIN FETCH p.applies a
         WHERE ((p.user.id = :revieweeId AND a.user.id = :userId)
             OR (p.user.id = :userId AND a.user.id = :revieweeId))
-        AND a.isSelected = true
+        AND a.isSelected = :status
         """)
-    List<Post> getAllPostsByTogether(Long revieweeId, Long userId);
+    List<Post> getAllPostsByTogether(Long revieweeId, Long userId, PassStatus status);
 }

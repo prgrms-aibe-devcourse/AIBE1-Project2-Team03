@@ -1,6 +1,7 @@
 package aibe.hosik.apply.repository;
 
 import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.entity.PassStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,8 +21,8 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Query("SELECT a FROM Apply a " +
             "JOIN FETCH a.user u " +
             "JOIN FETCH u.profile p " +
-            "WHERE a.post.id = :postId AND a.isSelected = true")
-    List<Apply> findWithUserAndProfileByPostId(@Param("postId") Long postId);
+            "WHERE a.post.id = :postId AND a.isSelected = :status")
+    List<Apply> findWithUserAndProfileByPostId(@Param("postId") Long postId,PassStatus status);
 
     /**
      * 특정 모집글에 대해 선정된 지원자의 수를 반환한다.
@@ -29,10 +30,10 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
      * @param postId 모집글 ID
      * @return 선정된 지원자 수
      */
-    int countByPostIdAndIsSelectedTrue(Long postId);
+    int countByPostIdAndIsSelected(Long postId, PassStatus status);
 
-    @Query("SELECT a.post.id as postId, COUNT(a) as count FROM Apply a WHERE a.isSelected = true GROUP BY a.post.id")
-    List<Map<String, Object>> countSelectedAppliesByPostId();
+    @Query("SELECT a.post.id as postId, COUNT(a) as count FROM Apply a WHERE a.isSelected = :status GROUP BY a.post.id")
+    List<Map<String, Object>> countSelectedAppliesByPostId(PassStatus status);
 
     /**
      * 특정 모집글에 지원한 지원자들과 그들의 이력서, 프로필 및 분석 결과를 함께 조회한다.

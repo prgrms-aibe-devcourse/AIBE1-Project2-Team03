@@ -6,6 +6,7 @@ import aibe.hosik.analysis.service.AnalysisService;
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
 import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
 import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
@@ -157,16 +158,16 @@ public class ApplyService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 팀원을 선택할 수 있습니다.");
         }
 
-        boolean previous = apply.isSelected();
+        PassStatus previous = apply.getIsSelected();
 
         // 선택 업데이트
         apply.updateIsSelected(isselected);
         applyRepository.save(apply);
 
-        int currentCount = applyRepository.countByPostIdAndIsSelectedTrue(post.getId());
+        int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
 
         // 매칭 선택 했을 때
-        if(!previous && isselected) {
+        if(previous.equals(PassStatus.FAIL) && isselected) {
             if(currentCount >= post.getHeadCount()){
                 post.setDone(true);
                 postRepository.save(post);
@@ -174,7 +175,7 @@ public class ApplyService {
         }
 
         // 매칭 취소 시 다시 모집 중 전환
-        else if(previous && !isselected) {
+        else if(previous.equals(PassStatus.PASS) && !isselected) {
             if(post.isDone() && currentCount < post.getHeadCount()){
                 post.setDone(false);
                 postRepository.save(post);
