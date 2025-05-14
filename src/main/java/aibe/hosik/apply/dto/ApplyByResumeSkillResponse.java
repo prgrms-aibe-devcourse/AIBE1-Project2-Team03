@@ -2,6 +2,7 @@ package aibe.hosik.apply.dto;
 
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
+import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.profile.Profile;
 import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.user.User;
@@ -16,7 +17,8 @@ public record ApplyByResumeSkillResponse(
         ResumeDetailResponse resume,
         String nickname,
         String profileImage,
-        boolean isSelected,
+        PassStatus isSelected,
+        String reason,
 
         Integer aiScore,
         String aiReason,
@@ -27,14 +29,14 @@ public record ApplyByResumeSkillResponse(
         Profile profile = user.getProfile();
         ResumeDetailResponse resume = ResumeDetailResponse.from(  apply.getResume());
 
-
         return ApplyByResumeSkillResponse.builder()
             .applyId(apply.getId())
             .userId(user.getId())
             .resume(resume)
             .nickname(profile.getNickname())
             .profileImage(profile.getImage())
-            .isSelected(apply.isSelected())
+            .isSelected(apply.getIsSelected())
+            .reason(apply.getReason())
             .aiScore(analysis != null ? analysis.getScore() : null)
             .aiReason(analysis != null ? analysis.getResult() : null)
             .aiSummary(analysis != null ? analysis.getSummary() : null)

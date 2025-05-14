@@ -1,5 +1,6 @@
 package aibe.hosik.resume.entity;
 
+import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.common.TimeEntity;
 import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.user.User;
@@ -25,7 +26,7 @@ public class Resume extends TimeEntity {
   @Column(nullable = false)
   private String title;
 
-  @Column(nullable = false,columnDefinition = "TEXT")
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
   @Column(nullable = false)
@@ -41,6 +42,9 @@ public class Resume extends TimeEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
-  @OneToMany(mappedBy = "resume")
+  @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ResumeSkill> resumeSkills = new ArrayList<>();
+
+  @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Apply> applies = new ArrayList<>();
 }
