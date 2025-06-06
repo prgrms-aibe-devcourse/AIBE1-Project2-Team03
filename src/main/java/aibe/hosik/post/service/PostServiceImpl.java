@@ -6,7 +6,7 @@ import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.skill.repository.PostSkillRepository;
 import aibe.hosik.skill.repository.SkillRepository;
 import aibe.hosik.skill.entity.PostSkill;

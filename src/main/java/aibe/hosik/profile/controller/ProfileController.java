@@ -1,15 +1,16 @@
-package aibe.hosik.profile;
+package aibe.hosik.profile.controller;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.dto.PostResponseDTO;
 import aibe.hosik.post.service.PostService;
+import aibe.hosik.profile.service.ProfileService;
 import aibe.hosik.profile.dto.ProfileDetailResponse;
 import aibe.hosik.profile.dto.ProfileRequest;
 import aibe.hosik.profile.dto.ProfileResponse;
 import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.resume.service.ResumeService;
-import aibe.hosik.review.ReviewService;
+import aibe.hosik.review.service.ReviewService;
 import aibe.hosik.review.dto.ReviewResponse;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;

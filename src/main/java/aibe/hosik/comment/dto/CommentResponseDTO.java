@@ -1,9 +1,6 @@
 package aibe.hosik.comment.dto;
 
 import aibe.hosik.comment.entity.Comment;
-import aibe.hosik.post.dto.PostResponseDTO;
-import aibe.hosik.post.entity.Post;
-import aibe.hosik.profile.Profile;
 import aibe.hosik.profile.dto.ProfileResponse;
 import aibe.hosik.user.User;
 

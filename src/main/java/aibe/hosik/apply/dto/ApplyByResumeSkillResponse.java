@@ -3,7 +3,7 @@ package aibe.hosik.apply.dto;
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.user.User;
 import lombok.Builder;

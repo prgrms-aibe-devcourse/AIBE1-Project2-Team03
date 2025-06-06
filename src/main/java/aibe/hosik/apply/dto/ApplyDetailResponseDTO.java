@@ -4,7 +4,7 @@ import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.post.entity.Post;
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.user.User;
 
