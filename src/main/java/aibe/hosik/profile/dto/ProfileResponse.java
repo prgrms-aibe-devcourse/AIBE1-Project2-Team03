@@ -1,6 +1,6 @@
 package aibe.hosik.profile.dto;
 
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 
 public record ProfileResponse(
     Long id,
