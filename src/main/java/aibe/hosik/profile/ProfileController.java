@@ -3,7 +3,6 @@ package aibe.hosik.profile;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.dto.PostResponseDTO;
-import aibe.hosik.post.service.PostService;
 import aibe.hosik.profile.dto.ProfileDetailResponse;
 import aibe.hosik.profile.dto.ProfileRequest;
 import aibe.hosik.profile.dto.ProfileResponse;

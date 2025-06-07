@@ -3,7 +3,6 @@ package aibe.hosik.resume.service;
 import aibe.hosik.apply.repository.ApplyRepository;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.post.service.StorageService;
 import aibe.hosik.resume.dto.ResumeRequest;
 import aibe.hosik.resume.dto.ResumeDetailResponse;
 import aibe.hosik.resume.dto.ResumeResponse;

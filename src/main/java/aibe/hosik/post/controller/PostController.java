@@ -3,7 +3,7 @@ package aibe.hosik.post.controller;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
-import aibe.hosik.post.facade.PostFacade;
+import aibe.hosik.post.service.PostService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Post", description = "모집글 API") // Swagger Tag
 public class PostController {
-  private final PostFacade postFacade;
+  private final PostService postService;
 
   @SecurityRequirement(name = "JWT")
   @Operation(summary = "모집글 등록", description = "모집글을 등록합니다.")
@@ -69,7 +69,7 @@ public class PostController {
             skills
     );
 
-    PostResponseDTO responseDTO = postFacade.createPost(dto, image, user);
+    PostResponseDTO responseDTO = postService.createPost(dto, image, user);
     return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
   }
 
@@ -77,13 +77,13 @@ public class PostController {
   @Operation(summary="모집글 조회", description = "모집글 목록을 조회합니다.")
   @GetMapping
   public ResponseEntity<List<PostResponseDTO>> getAllPosts(){
-    return ResponseEntity.ok(postFacade.getAllPosts());
+    return ResponseEntity.ok(postService.getAllPosts());
   }
 
   @Operation(summary="모집글 상세 조회", description="모집글 게시글을 상세 조회합니다")
   @GetMapping("/{postId}")
   public ResponseEntity<PostDetailDTO> getPostDetail(@PathVariable Long postId){
-    return ResponseEntity.ok(postFacade.getPostDetail(postId));
+    return ResponseEntity.ok(postService.getPostDetail(postId));
   }
 
   @SecurityRequirement(name = "JWT")
@@ -94,14 +94,14 @@ public class PostController {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
 
-    return ResponseEntity.ok(postFacade.getAllPostsByTogether(userId, user));
+    return ResponseEntity.ok(postService.getAllPostsByTogether(userId, user));
   }
 
   @SecurityRequirement(name = "JWT")
   @Operation(summary="모집글 삭제", description ="작성자는 모집글을 삭제합니다")
   @DeleteMapping("/{postId}")
   public ResponseEntity<?> deletePost(@PathVariable Long postId, @AuthenticationPrincipal User user){
-    postFacade.deletePost(postId, user);
+    postService.deletePost(postId, user);
     return ResponseEntity.noContent().build();
   }
 
@@ -144,7 +144,7 @@ public class PostController {
             skills
     );
 
-    PostResponseDTO responseDTO = postFacade.updatePost(postId, dto, image, user);
+    PostResponseDTO responseDTO = postService.updatePost(postId, dto, image, user);
     return ResponseEntity.ok(responseDTO);
   }
 }

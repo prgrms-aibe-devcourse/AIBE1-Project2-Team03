@@ -5,8 +5,6 @@ import aibe.hosik.post.dto.PostResponseDTO;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
 
-import aibe.hosik.post.service.PostService;
-
 import aibe.hosik.user.User;
 import aibe.hosik.user.UserRepository;
 import org.junit.jupiter.api.Test;
