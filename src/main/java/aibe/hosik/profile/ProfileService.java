@@ -2,6 +2,7 @@ package aibe.hosik.profile;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
+import aibe.hosik.post.service.StorageService;
 import aibe.hosik.profile.dto.ProfileRequest;
 import aibe.hosik.profile.dto.ProfileResponse;
 import lombok.RequiredArgsConstructor;
