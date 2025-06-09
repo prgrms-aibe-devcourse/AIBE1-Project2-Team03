@@ -3,6 +3,8 @@ package aibe.hosik.comment.controller;
 import aibe.hosik.comment.dto.CommentRequest;
 import aibe.hosik.comment.dto.CommentResponse;
 import aibe.hosik.comment.service.CommentService;
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,7 +32,7 @@ public class CommentController {
   @PostMapping
   public ResponseEntity<?> createComment(@RequestBody CommentRequest dto, @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     commentService.createComment(dto, user);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -48,7 +50,7 @@ public class CommentController {
   @DeleteMapping("/{commentId}")
   public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     commentService.deleteComment(commentId, user);
     return ResponseEntity.noContent().build();
@@ -61,7 +63,7 @@ public class CommentController {
                                          @RequestBody CommentRequest dto,
                                          @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     commentService.updateComment(commentId, dto, user);
     return ResponseEntity.ok().build();

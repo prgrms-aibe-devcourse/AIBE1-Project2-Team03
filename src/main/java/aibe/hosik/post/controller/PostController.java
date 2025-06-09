@@ -1,5 +1,7 @@
 package aibe.hosik.post.controller;
 
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
@@ -45,7 +47,7 @@ public class PostController {
           @AuthenticationPrincipal User user) {
 
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     LocalDate endDate;
@@ -53,8 +55,7 @@ public class PostController {
     try {
       endDate = LocalDate.parse(endedAt);
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "날짜 형식이 잘못되었습니다. 형식: YYYY-MM-DD (예: 2025-12-31)");
+      throw new CustomException(ErrorCode.INVALID_DATA_FORMAT);
     }
 
     // RequestParam 값을 DTO로 변환
@@ -91,7 +92,7 @@ public class PostController {
   @GetMapping("/{userId}/together")
   public ResponseEntity<List<PostTogetherResponse>> getAllPostsByTogether(@PathVariable Long userId, @AuthenticationPrincipal User user){
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     return ResponseEntity.ok(postService.getAllPostsByTogether(userId, user));
@@ -120,7 +121,7 @@ public class PostController {
                                       @RequestParam(value = "image", required = false) MultipartFile image,
                                       @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     LocalDate endDate = null;
@@ -128,8 +129,7 @@ public class PostController {
       try {
         endDate = LocalDate.parse(endedAt);
       } catch (Exception e) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "날짜 형식이 잘못되었습니다. 형식: YYYY-MM-DD (예: 2025-12-31)");
+        throw new CustomException(ErrorCode.INVALID_DATA_FORMAT);
       }
     }
 

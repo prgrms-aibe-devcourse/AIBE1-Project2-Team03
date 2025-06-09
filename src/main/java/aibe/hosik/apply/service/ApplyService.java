@@ -8,6 +8,8 @@ import aibe.hosik.apply.dto.ApplyDetailResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.apply.repository.ApplyRepository;
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.resume.entity.Resume;
@@ -47,22 +49,21 @@ public class ApplyService {
    */
   public void apply(Long userId, Long postId, Long resumeId, String reason) {
     Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new IllegalArgumentException("Post not found")); // postId로 모집글 조회
+            .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
     Resume resume = resumeRepository.findById(resumeId)
-            .orElseThrow(() -> new IllegalArgumentException("Resume not found")); // resumeId로 이력서 조회
+            .orElseThrow(() -> new IllegalArgumentException("Resume not found"));
 
     User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
 
-      // 한 번 더 검증 본인의 이력서인지 확인
       if (!resume.getUser().getId().equals(userId)) {
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 이력서만 사용할 수 있습니다.");
+          throw new CustomException(ErrorCode.RESUME_FORBIDDEN);
       }
 
     Apply apply = Apply.of(post, user, resume, reason);
-    applyRepository.save(apply); // DB에 저장
+    applyRepository.save(apply);
 
       log.info("AI 분석 시작 - applyId: {}", apply.getId());
       try {
@@ -70,7 +71,6 @@ public class ApplyService {
 
       } catch (Exception e) {
           log.error("AI 분석 중 오류 발생", e);
-          // 지원 자체는 성공으로 처리하고 분석 오류만 로깅
       }
   }
 
@@ -84,11 +84,11 @@ public class ApplyService {
     public List<ApplyByResumeSkillResponse> getApplyResumeWithSkillsByPostId(Long postId, User user) {
         // 모집글 정보 조회
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "모집글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
         // 모집글 작성자 검증
         if (!post.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 지원자 정보를 조회할 수 있습니다.");
+            throw new CustomException(ErrorCode.POST_AUTHOR_FORBIDDEN);
         }
 
         List<Apply> applies = applyRepository.findWithUserResumeAndAnalysisByPostId(postId);
@@ -111,10 +111,10 @@ public class ApplyService {
      */
     public ApplyDetailResponse getApplyDetailByApplyId(Long applyId, User user) {
         Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_APPLY));
 
         if (!apply.getPost().getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 지원자 정보를 조회할 수 있습니다.");
+            throw new CustomException(ErrorCode.POST_AUTHOR_FORBIDDEN);
         }
 
         List<String> skills = getSkillsByResumeId(apply.getResume().getId());
@@ -132,10 +132,10 @@ public class ApplyService {
      */
     public void deleteApply(Long applyId, User user) {
         Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_APPLY));
 
         if (!apply.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 지원서만 삭제할 수 있습니다.");
+            throw new CustomException(ErrorCode.APPLY_DELETE_FORBIDDEN);
         }
         applyRepository.delete(apply);
     }
@@ -150,12 +150,12 @@ public class ApplyService {
      */
     public void updateIsSelected(Long applyId, boolean isselected, User user) {
         Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다"));
+                .orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_APPLY));
 
         Post post = apply.getPost();
 
         if (!apply.getPost().getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "모집글 작성자만 팀원을 선택할 수 있습니다.");
+            throw new CustomException(ErrorCode.POST_AUTHOR_FORBIDDEN);
         }
 
         PassStatus previous = apply.getIsSelected();

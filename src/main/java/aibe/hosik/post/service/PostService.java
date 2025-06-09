@@ -3,6 +3,8 @@ package aibe.hosik.post.service;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.apply.repository.ApplyRepository;
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.dto.*;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
@@ -13,7 +15,6 @@ import aibe.hosik.skill.entity.PostSkill;
 import aibe.hosik.skill.entity.Skill;
 import aibe.hosik.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -182,7 +183,7 @@ public class PostService {
     Post post = postRepository.findById(postId)
         .orElseThrow();
     if (post.getUser() == null || !post.getUser().getId().equals(user.getId())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 삭제할 수 있습니다");
+      throw new CustomException(ErrorCode.POST_ACCESS_DENIED);
     }
     postRepository.delete(post);
   }
@@ -203,7 +204,7 @@ public class PostService {
     Post post = postRepository.findById(postId)
         .orElseThrow();
     if (!post.getUser().getId().equals(user.getId())) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 수정할 수 있습니다");
+      throw new CustomException(ErrorCode.POST_ACCESS_DENIED);
     }
 
     if (image != null && !image.isEmpty()) {
