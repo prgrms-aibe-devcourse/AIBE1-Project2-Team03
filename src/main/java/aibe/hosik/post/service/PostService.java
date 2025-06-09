@@ -36,9 +36,9 @@ public class PostService {
   /**
    * 모든 게시글을 조회하는 메서드입니다.
    *
-   * @return 게시글 정보와 관련된 스킬 정보 및 현재 참여자 수를 포함한 PostResponseDTO 객체 리스트
+   * @return 게시글 정보와 관련된 스킬 정보 및 현재 참여자 수를 포함한 PostResponse 객체 리스트
    */
-  public List<PostResponseDTO> getAllPosts() {
+  public List<PostResponse> getAllPosts() {
     // findAllWithSkills로 한 번에 fetch(post, postSkills, skill)
     List<Post> posts = postRepository.findAllWithSkills();
 
@@ -61,12 +61,12 @@ public class PostService {
 
               int currentCount = postIdToCountMap.getOrDefault(post.getId(), 0);
 
-              return PostResponseDTO.from(post, skills, currentCount);
+              return PostResponse.from(post, skills, currentCount);
             }).collect(Collectors.toList());
 
   }
 
-  public List<PostResponseDTO> getAllPostsCreatedByAuthor(Long userId) {
+  public List<PostResponse> getAllPostsCreatedByAuthor(Long userId) {
     List<Post> posts = postRepository.findAllWithSkills();
 
     return posts.stream()
@@ -78,11 +78,11 @@ public class PostService {
           int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
 
           // DTO 정적 팩토리 메서드 활용
-          return PostResponseDTO.from(post, skills, currentCount);
+          return PostResponse.from(post, skills, currentCount);
         }).collect(Collectors.toList());
   }
 
-  public List<PostResponseDTO> getAllPostsJoinedByUser(Long userId) {
+  public List<PostResponse> getAllPostsJoinedByUser(Long userId) {
     List<Post> posts = postRepository.findAllJoinedByUser(userId,PassStatus.PASS);
 
     return posts.stream()
@@ -93,14 +93,14 @@ public class PostService {
           int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
 
           // DTO 정적 팩토리 메서드 활용
-          return PostResponseDTO.from(post, skills, currentCount);
+          return PostResponse.from(post, skills, currentCount);
         }).collect(Collectors.toList());
   }
 
-  public List<PostTogetherDTO> getAllPostsByTogether(Long revieweeId, User user) {
+  public List<PostTogetherResponse> getAllPostsByTogether(Long revieweeId, User user) {
     return postRepository.getAllPostsByTogether(revieweeId, user.getId(),PassStatus.PASS)
         .stream()
-        .map(post-> new PostTogetherDTO(post.getId(),post.getTitle()))
+        .map(post-> new PostTogetherResponse(post.getId(),post.getTitle()))
         .toList();
   }
 
@@ -114,7 +114,7 @@ public class PostService {
    * @throws RuntimeException 이미지 업로드 실패 시 발생하는 예외
    */
   @Transactional
-  public PostResponseDTO createPost(PostRequestDTO dto, MultipartFile image, User user) {
+  public PostResponse createPost(PostCreateRequest dto, MultipartFile image, User user) {
     String imageUrl = null;
     if (image != null && !image.isEmpty()) {
       imageUrl = storageService.upload(image); // Supabase에 업로드 후 URL 획득
@@ -145,16 +145,16 @@ public class PostService {
 
     // 추후 Apply > is_selected 될 때 변경
     int currentCount = 0;
-    return PostResponseDTO.from(savePost, skills, currentCount);
+    return PostResponse.from(savePost, skills, currentCount);
   }
 
   /**
    * 특정 게시글의 상세 정보를 조회하는 메서드입니다.
    *
    * @param postId 상세 정보를 조회하려는 게시글의 ID
-   * @return 게시글 정보, 관련된 스킬 정보, 매칭 사용자 정보를 포함한 PostDetailDTO 객체
+   * @return 게시글 정보, 관련된 스킬 정보, 매칭 사용자 정보를 포함한 PostDetailResponse 객체
    */
-  public PostDetailDTO getPostDetail(Long postId) {
+  public PostDetailResponse getPostDetail(Long postId) {
     // 게시글 정보 조회
     Post post = postRepository.findByIdWithSkills(postId)
         .orElseThrow();
@@ -165,10 +165,10 @@ public class PostService {
         .collect(Collectors.toList());
 
     // 매칭 사용자 정보 조회
-    List<MatchedUserDTO> matchedUsers = findMatchedUsers(postId);
+    List<MatchedUserResponse> matchedUsers = findMatchedUsers(postId);
     int currentCount = matchedUsers.size();
 
-    return PostDetailDTO.from(post, skills, matchedUsers, currentCount);
+    return PostDetailResponse.from(post, skills, matchedUsers, currentCount);
   }
 
   /**
@@ -194,12 +194,12 @@ public class PostService {
    * @param dto    수정할 게시글 데이터를 포함하는 객체
    * @param image  게시글과 함께 업로드할 이미지 파일
    * @param user   요청을 보낸 사용자 객체
-   * @return 수정된 게시글 정보를 포함하는 PostResponseDTO 객체
+   * @return 수정된 게시글 정보를 포함하는 PostResponse 객체
    * @throws ResponseStatusException 작성자가 아닌 사용자가 요청한 경우 FORBIDDEN 상태 코드 예외를 발생시킴
    * @throws RuntimeException        이미지 업로드 실패 시 발생
    */
   @Transactional
-  public PostResponseDTO updatePost(Long postId, PostPatchDTO dto, MultipartFile image, User user) {
+  public PostResponse updatePost(Long postId, PostUpdateRequest dto, MultipartFile image, User user) {
     Post post = postRepository.findById(postId)
         .orElseThrow();
     if (!post.getUser().getId().equals(user.getId())) {
@@ -239,11 +239,11 @@ public class PostService {
 
     // 수정 X
     int currentCount = applyRepository.countByPostIdAndIsSelected(postId,PassStatus.PASS);
-    return PostResponseDTO.from(post, skills, currentCount);
+    return PostResponse.from(post, skills, currentCount);
   }
 
   // 현재 매칭된 사람 정보 조회
-  private List<MatchedUserDTO> findMatchedUsers(Long postId) {
+  private List<MatchedUserResponse> findMatchedUsers(Long postId) {
     List<Apply> applies = applyRepository.findWithUserAndProfileByPostId(postId, PassStatus.PASS);
 
     return applies.stream()
@@ -251,7 +251,7 @@ public class PostService {
           User user = apply.getUser();
           Profile profile = user.getProfile();
 
-          return new MatchedUserDTO(
+          return new MatchedUserResponse(
               user.getId(),
               profile.getNickname(),
               profile.getImage(),

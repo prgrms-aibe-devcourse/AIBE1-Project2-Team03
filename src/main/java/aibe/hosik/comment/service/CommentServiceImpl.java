@@ -1,7 +1,7 @@
 package aibe.hosik.comment.service;
 
-import aibe.hosik.comment.dto.CommentRequestDTO;
-import aibe.hosik.comment.dto.CommentResponseDTO;
+import aibe.hosik.comment.dto.CommentRequest;
+import aibe.hosik.comment.dto.CommentResponse;
 import aibe.hosik.comment.entity.Comment;
 import aibe.hosik.comment.repository.CommentRepository;
 import aibe.hosik.post.entity.Post;
@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService{
      */
     @Override
     @Transactional
-    public void createComment(CommentRequestDTO dto, User user) {
+    public void createComment(CommentRequest dto, User user) {
         // post id로 게시글 찾기
         Post post = postRepository.findById(dto.postId())
                 .orElseThrow();
@@ -57,24 +57,24 @@ public class CommentServiceImpl implements CommentService{
      */
     @Override
     @Transactional
-    public List<CommentResponseDTO> getCommentsByPostId(Long postId) {
+    public List<CommentResponse> getCommentsByPostId(Long postId) {
         // postId의 댓글 모두 찾기
         List<Comment> comments = commentRepository.findByPostIdOrderByCreatedAtAsc(postId);
 
-        Map<Long, CommentResponseDTO> commentMap = new HashMap<>();
-        List<CommentResponseDTO> roots = new ArrayList<>();
+        Map<Long, CommentResponse> commentMap = new HashMap<>();
+        List<CommentResponse> roots = new ArrayList<>();
 
         // 댓글 DTO 변환 > Map에 저장
         for(Comment c : comments) {
             // DTO 변환
-            CommentResponseDTO dto = CommentResponseDTO.from(c);
+            CommentResponse dto = CommentResponse.from(c);
             commentMap.put(c.getId(), dto);
 
             if(c.getParentComment() == null) {
                 roots.add(dto);
             } else {
                 // 부모가 있으면 부모의 replies에 추가
-                CommentResponseDTO parentDto = commentMap.get(c.getParentComment().getId());
+                CommentResponse parentDto = commentMap.get(c.getParentComment().getId());
                 parentDto.replies().add(dto);
             }
         }
@@ -102,7 +102,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     @Transactional
-    public void updateComment(Long commentId, CommentRequestDTO dto, User user) {
+    public void updateComment(Long commentId, CommentRequest dto, User user) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow();
 

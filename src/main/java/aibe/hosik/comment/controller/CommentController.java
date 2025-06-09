@@ -1,8 +1,7 @@
 package aibe.hosik.comment.controller;
 
-import aibe.hosik.comment.dto.CommentRequestDTO;
-import aibe.hosik.comment.dto.CommentResponseDTO;
-import aibe.hosik.comment.entity.Comment;
+import aibe.hosik.comment.dto.CommentRequest;
+import aibe.hosik.comment.dto.CommentResponse;
 import aibe.hosik.comment.service.CommentService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,7 @@ public class CommentController {
   @SecurityRequirement(name = "JWT")
   @Operation(summary="댓글 등록", description="댓글 및 대댓글을 등록합니다.")
   @PostMapping
-  public ResponseEntity<?> createComment(@RequestBody CommentRequestDTO dto, @AuthenticationPrincipal User user) {
+  public ResponseEntity<?> createComment(@RequestBody CommentRequest dto, @AuthenticationPrincipal User user) {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
@@ -39,8 +38,8 @@ public class CommentController {
 
   @Operation(summary="댓글 조회", description=" 모든 댓글 및 대댓글을 조회합니다.")
   @GetMapping
-  public ResponseEntity<List<CommentResponseDTO>> getComments(@RequestParam Long postId){
-    List<CommentResponseDTO> comments = commentService.getCommentsByPostId(postId);
+  public ResponseEntity<List<CommentResponse>> getComments(@RequestParam Long postId){
+    List<CommentResponse> comments = commentService.getCommentsByPostId(postId);
     return ResponseEntity.ok(comments);
   }
 
@@ -59,7 +58,7 @@ public class CommentController {
   @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
   @PatchMapping("/{commentId}")
   public ResponseEntity<?> updateComment(@PathVariable Long commentId,
-                                         @RequestBody CommentRequestDTO dto,
+                                         @RequestBody CommentRequest dto,
                                          @AuthenticationPrincipal User user) {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");

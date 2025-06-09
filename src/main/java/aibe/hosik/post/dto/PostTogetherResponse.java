@@ -1,6 +1,6 @@
 package aibe.hosik.post.dto;
 
-public record PostTogetherDTO(
+public record PostTogetherResponse(
     Long postId,
     String postTitle
 ) {

@@ -1,6 +1,5 @@
 package aibe.hosik.review.dto;
 
-import aibe.hosik.post.dto.PostDetailDTO;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.profile.dto.ProfileResponse;
 import aibe.hosik.review.Review;

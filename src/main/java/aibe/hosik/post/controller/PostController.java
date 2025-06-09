@@ -58,7 +58,7 @@ public class PostController {
     }
 
     // RequestParam 값을 DTO로 변환
-    PostRequestDTO dto = new PostRequestDTO(
+    PostCreateRequest dto = new PostCreateRequest(
             title,
             content,
             headCount,
@@ -69,27 +69,27 @@ public class PostController {
             skills
     );
 
-    PostResponseDTO responseDTO = postService.createPost(dto, image, user);
+    PostResponse responseDTO = postService.createPost(dto, image, user);
     return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
   }
 
 
   @Operation(summary="모집글 조회", description = "모집글 목록을 조회합니다.")
   @GetMapping
-  public ResponseEntity<List<PostResponseDTO>> getAllPosts(){
+  public ResponseEntity<List<PostResponse>> getAllPosts(){
     return ResponseEntity.ok(postService.getAllPosts());
   }
 
   @Operation(summary="모집글 상세 조회", description="모집글 게시글을 상세 조회합니다")
   @GetMapping("/{postId}")
-  public ResponseEntity<PostDetailDTO> getPostDetail(@PathVariable Long postId){
+  public ResponseEntity<PostDetailResponse> getPostDetail(@PathVariable Long postId){
     return ResponseEntity.ok(postService.getPostDetail(postId));
   }
 
   @SecurityRequirement(name = "JWT")
   @Operation(summary="함께한 모집글 목록 조회", description="함께한 게시글을 상세 조회합니다")
   @GetMapping("/{userId}/together")
-  public ResponseEntity<List<PostTogetherDTO>> getAllPostsByTogether(@PathVariable Long userId, @AuthenticationPrincipal User user){
+  public ResponseEntity<List<PostTogetherResponse>> getAllPostsByTogether(@PathVariable Long userId, @AuthenticationPrincipal User user){
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
@@ -133,7 +133,7 @@ public class PostController {
       }
     }
 
-    PostPatchDTO dto = new PostPatchDTO(
+    PostUpdateRequest dto = new PostUpdateRequest(
             title,
             content,
             headCount,
@@ -144,7 +144,7 @@ public class PostController {
             skills
     );
 
-    PostResponseDTO responseDTO = postService.updatePost(postId, dto, image, user);
+    PostResponse responseDTO = postService.updatePost(postId, dto, image, user);
     return ResponseEntity.ok(responseDTO);
   }
 }

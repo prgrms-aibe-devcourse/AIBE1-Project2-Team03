@@ -8,7 +8,7 @@ import aibe.hosik.user.User;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PostRequestDTO(
+public record PostCreateRequest(
         String title,
         String content,
         Integer headCount,

@@ -1,7 +1,7 @@
 package aibe.hosik.apply.controller;
 
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
-import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
+import aibe.hosik.apply.dto.ApplyDetailResponse;
 import aibe.hosik.apply.dto.ApplyRequest;
 import aibe.hosik.apply.service.ApplyService;
 import aibe.hosik.user.User;
@@ -51,12 +51,12 @@ public class ApplyController {
   @SecurityRequirement(name="JWT")
   @Operation(summary = "지원서 상세보기", description = "특정 지원서의 상세 정보를 조회합니다")
   @GetMapping("/{applyId}")
-  public ResponseEntity<ApplyDetailResponseDTO> getApplyDetail(
+  public ResponseEntity<ApplyDetailResponse> getApplyDetail(
           @PathVariable Long applyId, @AuthenticationPrincipal User user){
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
-    ApplyDetailResponseDTO result = applyService.getApplyDetailByApplyId(applyId, user);
+    ApplyDetailResponse result = applyService.getApplyDetailByApplyId(applyId, user);
     return ResponseEntity.ok(result);
   }
 

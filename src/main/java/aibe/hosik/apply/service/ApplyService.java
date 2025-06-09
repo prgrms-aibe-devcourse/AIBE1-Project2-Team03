@@ -4,7 +4,7 @@ import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.analysis.repository.AnalysisRepository;
 import aibe.hosik.analysis.service.AnalysisService;
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
-import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
+import aibe.hosik.apply.dto.ApplyDetailResponse;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.apply.repository.ApplyRepository;
@@ -109,7 +109,7 @@ public class ApplyService {
      * 특정 모집글에 지원한 사람들의 자기소개서 전문을 반환하는 기능
      * 게시글 상세보기 기능
      */
-    public ApplyDetailResponseDTO getApplyDetailByApplyId(Long applyId, User user) {
+    public ApplyDetailResponse getApplyDetailByApplyId(Long applyId, User user) {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."));
 
@@ -120,7 +120,7 @@ public class ApplyService {
         List<String> skills = getSkillsByResumeId(apply.getResume().getId());
         Analysis analysis = analysisRepository.findLatestByApplyId(applyId).orElse(null);
 
-        return ApplyDetailResponseDTO.from(apply, skills, analysis);
+        return ApplyDetailResponse.from(apply, skills, analysis);
     }
 
 

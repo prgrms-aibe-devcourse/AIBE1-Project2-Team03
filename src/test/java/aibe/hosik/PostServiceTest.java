@@ -1,7 +1,7 @@
 package aibe.hosik;
 
-import aibe.hosik.post.dto.PostRequestDTO;
-import aibe.hosik.post.dto.PostResponseDTO;
+import aibe.hosik.post.dto.PostCreateRequest;
+import aibe.hosik.post.dto.PostResponse;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
 
@@ -35,7 +35,7 @@ class PostServiceTest {
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("테스트 유저가 없습니다."));
 
-        PostRequestDTO dto = new PostRequestDTO(
+        PostCreateRequest dto = new PostCreateRequest(
                 "테스트 제목", "테스트 내용", 3,
                 "ENFP", LocalDate.now().plusDays(7),
                 PostCategory.PROJECT, PostType.ONLINE,
@@ -46,7 +46,7 @@ class PostServiceTest {
                 "image", "test.jpg", "image/jpeg", "테스트 이미지".getBytes()
         );
 
-        PostResponseDTO response = postService.createPost(dto, image, user);
+        PostResponse response = postService.createPost(dto, image, user);
 
         assertEquals("테스트 제목", response.title());
         assertNotNull(response.image()); // 이미지도 잘 올라갔는지 확인
