@@ -1,10 +1,12 @@
-package aibe.hosik.profile;
+package aibe.hosik.profile.service;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.post.service.StorageService;
+import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.profile.dto.ProfileRequest;
 import aibe.hosik.profile.dto.ProfileResponse;
+import aibe.hosik.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

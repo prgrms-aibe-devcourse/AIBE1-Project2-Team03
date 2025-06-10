@@ -1,8 +1,7 @@
 package aibe.hosik.user;
 
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
