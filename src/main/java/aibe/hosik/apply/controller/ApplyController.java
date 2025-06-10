@@ -1,9 +1,11 @@
 package aibe.hosik.apply.controller;
 
 import aibe.hosik.apply.dto.ApplyByResumeSkillResponse;
-import aibe.hosik.apply.dto.ApplyDetailResponseDTO;
+import aibe.hosik.apply.dto.ApplyDetailResponse;
 import aibe.hosik.apply.dto.ApplyRequest;
 import aibe.hosik.apply.service.ApplyService;
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,7 +33,7 @@ public class ApplyController {
   @PostMapping
   public ResponseEntity<?> apply(@RequestBody ApplyRequest request, @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     applyService.apply(user.getId(), request.postId(), request.resumeId(), request.reason());
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -42,7 +44,7 @@ public class ApplyController {
   @GetMapping("/post/{postId}/resume-skills")
   public ResponseEntity<List<ApplyByResumeSkillResponse>> getApplyResumeWithSkills(@PathVariable Long postId,@AuthenticationPrincipal  User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     List<ApplyByResumeSkillResponse> result = applyService.getApplyResumeWithSkillsByPostId(postId, user);
     return ResponseEntity.ok(result);
@@ -51,12 +53,12 @@ public class ApplyController {
   @SecurityRequirement(name="JWT")
   @Operation(summary = "지원서 상세보기", description = "특정 지원서의 상세 정보를 조회합니다")
   @GetMapping("/{applyId}")
-  public ResponseEntity<ApplyDetailResponseDTO> getApplyDetail(
+  public ResponseEntity<ApplyDetailResponse> getApplyDetail(
           @PathVariable Long applyId, @AuthenticationPrincipal User user){
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
-    ApplyDetailResponseDTO result = applyService.getApplyDetailByApplyId(applyId, user);
+    ApplyDetailResponse result = applyService.getApplyDetailByApplyId(applyId, user);
     return ResponseEntity.ok(result);
   }
 
@@ -66,7 +68,7 @@ public class ApplyController {
   public ResponseEntity<?> deleteApply(
           @PathVariable Long applyId, @AuthenticationPrincipal User user){
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     applyService.deleteApply(applyId, user);
     return ResponseEntity.noContent().build();
@@ -80,7 +82,7 @@ public class ApplyController {
           @RequestParam boolean selected,
           @AuthenticationPrincipal User user) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
     applyService.updateIsSelected(applyId, selected, user);
     return ResponseEntity.ok().build();

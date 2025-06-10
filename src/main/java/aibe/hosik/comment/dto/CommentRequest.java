@@ -5,7 +5,7 @@ import aibe.hosik.post.entity.Post;
 import aibe.hosik.user.User;
 
 // 댓글 작성 DTO
-public record CommentRequestDTO(
+public record CommentRequest(
         String content,
         Long postId,
         Long parentCommentId

@@ -2,8 +2,7 @@ package aibe.hosik.post.entity;
 
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.common.TimeEntity;
-import aibe.hosik.post.dto.PostPatchDTO;
-import aibe.hosik.post.dto.PostRequestDTO;
+import aibe.hosik.post.dto.PostUpdateRequest;
 import aibe.hosik.skill.entity.PostSkill;
 import aibe.hosik.user.User;
 import jakarta.persistence.*;
@@ -70,7 +69,7 @@ public class Post extends TimeEntity {
   private List<Apply> applies = new ArrayList<>();
 
   // 게시글 수정 메서드
-  public void updatePatch(PostPatchDTO dto) {
+  public void updatePatch(PostUpdateRequest dto) {
     if (dto.title() != null) this.title = dto.title();
     if (dto.content() != null) this.content = dto.content();
     if (dto.requirementPersonality() != null) this.requirementPersonality = dto.requirementPersonality();

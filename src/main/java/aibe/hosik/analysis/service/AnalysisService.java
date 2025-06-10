@@ -1,7 +1,6 @@
 package aibe.hosik.analysis.service;
 
 import aibe.hosik.analysis.client.GeminiClient;
-import aibe.hosik.analysis.dto.AnalysisDTO;
 import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.analysis.repository.AnalysisRepository;
 import aibe.hosik.apply.entity.Apply;
@@ -21,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;

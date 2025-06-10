@@ -2,7 +2,7 @@ package aibe.hosik.profile.controller;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.post.dto.PostResponseDTO;
+import aibe.hosik.post.dto.PostResponse;
 import aibe.hosik.post.service.PostService;
 import aibe.hosik.profile.service.ProfileService;
 import aibe.hosik.profile.dto.ProfileDetailResponse;
@@ -52,8 +52,8 @@ public class ProfileController {
     Long userId = user.getId();
 
     ProfileResponse profile = profileService.getProfileByUserId(userId);
-    List<PostResponseDTO> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
-    List<PostResponseDTO> joinedPosts = postService.getAllPostsJoinedByUser(userId);
+    List<PostResponse> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
+    List<PostResponse> joinedPosts = postService.getAllPostsJoinedByUser(userId);
     List<ReviewResponse> reviews = reviewService.getAllReviewsByUserId(userId);
     List<ResumeDetailResponse> resumes = resumeService.getAllResumesByUserId(userId);
 
@@ -74,8 +74,8 @@ public class ProfileController {
     }
 
     ProfileResponse profile = profileService.getProfileByUserId(userId);
-    List<PostResponseDTO> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
-    List<PostResponseDTO> joinedPosts = postService.getAllPostsJoinedByUser(userId);
+    List<PostResponse> authorPosts = postService.getAllPostsCreatedByAuthor(userId);
+    List<PostResponse> joinedPosts = postService.getAllPostsJoinedByUser(userId);
     List<ReviewResponse> reviews = reviewService.getAllReviewsByUserId(userId);
     List<ResumeDetailResponse> resumes = resumeService.getAllResumesByUserId(userId);
 
