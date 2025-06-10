@@ -22,7 +22,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "JOIN FETCH a.user u " +
             "JOIN FETCH u.profile p " +
             "WHERE a.post.id = :postId AND a.isSelected = :status")
-    List<Apply> findWithUserAndProfileByPostId(@Param("postId") Long postId,PassStatus status);
+    List<Apply> findWithUserAndProfileByPostId(@Param("postId") Long postId, PassStatus status);
 
     /**
      * 특정 모집글에 대해 선정된 지원자의 수를 반환한다.

@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class ResumeSkill {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Resume resume;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Resume resume;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Skill skill;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Skill skill;
 }

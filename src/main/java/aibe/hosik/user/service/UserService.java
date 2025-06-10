@@ -1,10 +1,13 @@
-package aibe.hosik.user;
+package aibe.hosik.user.service;
 
-import aibe.hosik.auth.dto.SignUpRequest;
 import aibe.hosik.auth.dto.PasswordChangeRequest;
+import aibe.hosik.auth.dto.SignUpRequest;
 import aibe.hosik.auth.dto.SocialLoginRequest;
 import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.profile.repository.ProfileRepository;
+import aibe.hosik.user.entity.Role;
+import aibe.hosik.user.entity.User;
+import aibe.hosik.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,28 +35,28 @@ public class UserService {
     public void register(SignUpRequest req) {
         // 이미 사용 중인 아이디인지 확인
         userRepository.findByUsername(req.username())
-            .ifPresent(u -> {
-                throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-            });
+                .ifPresent(u -> {
+                    throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+                });
         // 이미 사용 중인 이메일인지 확인
         userRepository.findByEmail(req.email())
-            .ifPresent(u -> {
-                throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-            });
+                .ifPresent(u -> {
+                    throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+                });
 
         // User 객체 생성 및 필드 설정
         User user = User.builder()
-            .username(req.username())
-            .password(passwordEncoder.encode(req.password()))
-            .email(req.email())
-            .name(req.name())
-            .roles(Role.USER)
-            .build();
+                .username(req.username())
+                .password(passwordEncoder.encode(req.password()))
+                .email(req.email())
+                .name(req.name())
+                .roles(Role.USER)
+                .build();
 
         Profile profile = Profile.builder()
-            .user(user)
-            .nickname(req.name())
-            .build();
+                .user(user)
+                .nickname(req.name())
+                .build();
 
         user.linkProfile(profile);
 
@@ -63,23 +66,23 @@ public class UserService {
     @Transactional
     public User socialLogin(SocialLoginRequest request) {
         return userRepository.findBySocialTypeAndSocialId(request.type(), request.socialId())
-            .orElseGet(() -> {
-                User user = User.builder()
-                    .name(request.name())
-                    .username(UUID.randomUUID().toString())
-                    .socialId(request.socialId())
-                    .socialType(request.type())
-                    .build();
+                .orElseGet(() -> {
+                    User user = User.builder()
+                            .name(request.name())
+                            .username(UUID.randomUUID().toString())
+                            .socialId(request.socialId())
+                            .socialType(request.type())
+                            .build();
 
-                Profile profile = Profile.builder()
-                    .user(user)
-                    .nickname(request.name())
-                    .build();
+                    Profile profile = Profile.builder()
+                            .user(user)
+                            .nickname(request.name())
+                            .build();
 
-                user.linkProfile(profile);
+                    user.linkProfile(profile);
 
-                return userRepository.save(user);
-            });
+                    return userRepository.save(user);
+                });
     }
 
     /**
@@ -93,9 +96,9 @@ public class UserService {
     public void changePassword(PasswordChangeRequest req) {
         // email로 사용자 찾기
         User user = userRepository.findByEmail(req.email())
-            .orElseThrow(() ->
-                new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다: " + req.email())
-            );
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다: " + req.email())
+                );
 
         // 기존 비밀번호 검증
         if (!passwordEncoder.matches(req.oldPassword(), user.getPassword())) {

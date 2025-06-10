@@ -17,25 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Analysis", description = "분석 API") // Swagger Tag
 public class AnalysisController {
-  private final AnalysisService analysisService;
+    private final AnalysisService analysisService;
 
-  /**
-   * 수동으로 AI 분석을 재실행하는 엔드포인트
-   *
-   * @param applyId 지원서 ID
-   * @return 성공 또는 실패 메시지
-   */
-  @Operation(
-          summary = "AI 분석 수동 재시도",
-          description = "지원서 ID를 기반으로 AI 분석을 수동으로 재실행"
-  )
-  @PostMapping("/retry/{applyId}")
-  public ResponseEntity<String> retryAnalysis(@PathVariable Long applyId) {
-    try {
-      analysisService.analysisApply(applyId);  // 동기 실행
-      return ResponseEntity.ok("AI 분석이 성공적으로 완료");
-    } catch (Exception e) {
-      return ResponseEntity.internalServerError().body("AI 분석 중 오류 발생: " + e.getMessage());
+    /**
+     * 수동으로 AI 분석을 재실행하는 엔드포인트
+     *
+     * @param applyId 지원서 ID
+     * @return 성공 또는 실패 메시지
+     */
+    @Operation(
+            summary = "AI 분석 수동 재시도",
+            description = "지원서 ID를 기반으로 AI 분석을 수동으로 재실행"
+    )
+    @PostMapping("/retry/{applyId}")
+    public ResponseEntity<String> retryAnalysis(@PathVariable Long applyId) {
+        try {
+            analysisService.analysisApply(applyId);  // 동기 실행
+            return ResponseEntity.ok("AI 분석이 성공적으로 완료");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("AI 분석 중 오류 발생: " + e.getMessage());
+        }
     }
-  }
 }

@@ -1,7 +1,6 @@
 package aibe.hosik.post.service;
 
 
-import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.analysis.repository.AnalysisRepository;
 import aibe.hosik.analysis.service.AnalysisService;
 import aibe.hosik.apply.entity.Apply;
@@ -11,13 +10,11 @@ import aibe.hosik.post.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +28,7 @@ public class SchedularService {
     /**
      * 매일 자정 모집 기한 지난 글 idDone을 true로 설정
      */
-    @Scheduled(cron ="0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void checkFinishedPosts() {
         log.info("모집글 기한 만료 체크");
@@ -40,7 +37,7 @@ public class SchedularService {
         // 마김되지 않은 게시글 중 마감일이 오늘까지 or 이전
         List<Post> finishedPost = postRepository.findByIsDoneFalseAndEndedAtLessThanEqual(today);
 
-        for(Post post : finishedPost) {
+        for (Post post : finishedPost) {
             post.setDone(true);
             postRepository.save(post);
             log.info("모집글 ID: {} : 모집 기간 만료. 자동 마감 처리", post.getId());

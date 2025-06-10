@@ -1,7 +1,7 @@
 package aibe.hosik.auth.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 비밀번호 변경 요청을 담는 DTO
@@ -16,4 +16,5 @@ public record PasswordChangeRequest(
 
         @NotBlank
         String newPassword
-) {}
+) {
+}

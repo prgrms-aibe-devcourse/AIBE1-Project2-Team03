@@ -2,24 +2,24 @@ package aibe.hosik.auth.service;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.user.User;
-import aibe.hosik.user.UserRepository;
-import aibe.hosik.user.SocialType;
-import aibe.hosik.user.Role;
+import aibe.hosik.user.entity.Role;
+import aibe.hosik.user.entity.SocialType;
+import aibe.hosik.user.entity.User;
+import aibe.hosik.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -154,5 +154,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             String name,
             String socialId,
             SocialType socialType
-    ) {}
+    ) {
+    }
 }

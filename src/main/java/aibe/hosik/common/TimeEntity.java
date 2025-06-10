@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 public class TimeEntity {
-  @CreatedDate
-  @Column
-  private LocalDateTime createdAt;
+    @CreatedDate
+    @Column
+    private LocalDateTime createdAt;
 
-  @LastModifiedDate
-  @Column
-  private LocalDateTime updatedAt;
+    @LastModifiedDate
+    @Column
+    private LocalDateTime updatedAt;
 }
 

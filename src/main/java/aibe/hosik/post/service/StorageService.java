@@ -38,26 +38,26 @@ public class StorageService {
         String boundary = "Boundary-%s".formatted(uuid);
         String filename = "%s.%s".formatted(uuid, extension);
 
-      HttpRequest request = null;
-      try {
-        request = HttpRequest.newBuilder()
-                .uri(URI.create("%s/storage/v1/object/%s/%s".formatted(url, bucketName, filename)))
-                .header("Authorization", "Bearer " + accessKey)
-                .header("Content-Type", "multipart/form-data; boundary=" + boundary)
-                .POST(ofMimeMultipartData(file, boundary))
-                .build();
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .uri(URI.create("%s/storage/v1/object/%s/%s".formatted(url, bucketName, filename)))
+                    .header("Authorization", "Bearer " + accessKey)
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                    .POST(ofMimeMultipartData(file, boundary))
+                    .build();
 
-      HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new IOException("Supabase upload error: " + response.body());
+            if (response.statusCode() != 200) {
+                throw new IOException("Supabase upload error: " + response.body());
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
-      } catch (IOException | InterruptedException  e) {
-          throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
-      }
-
-      return "%s/storage/v1/object/public/%s/%s".formatted(url, bucketName, filename);
+        return "%s/storage/v1/object/public/%s/%s".formatted(url, bucketName, filename);
     }
 
     private HttpRequest.BodyPublisher ofMimeMultipartData(MultipartFile file, String boundary) throws IOException {

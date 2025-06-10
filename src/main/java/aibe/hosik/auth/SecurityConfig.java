@@ -52,17 +52,17 @@ public class SecurityConfig {
                             configuration.setAllowedOrigins(uniqueOriginsList);
                             log.info("Cors = {}", uniqueOriginsList.toString());
 
-                    configuration.setAllowedOrigins(uniqueOriginsList);
-                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-                    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
-                    configuration.setAllowCredentials(true);
-                    configuration.setMaxAge(3600L);
-                    return configuration;
-                }))
+                            configuration.setAllowedOrigins(uniqueOriginsList);
+                            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                            configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+                            configuration.setAllowCredentials(true);
+                            configuration.setMaxAge(3600L);
+                            return configuration;
+                        }))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/signup", "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/login").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/api/data/**").authenticated()
                         .anyRequest().permitAll()

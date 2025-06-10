@@ -3,7 +3,7 @@ package aibe.hosik;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;  // 이 import 추가
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -30,9 +30,9 @@ public class SwaggerConfig {
                 ));
     }
 
-  public SwaggerConfig(MappingJackson2HttpMessageConverter converter) {
-    List<MediaType> supportMediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
-    supportMediaTypes.add(new MediaType("application", "octet-stream"));
-    converter.setSupportedMediaTypes(supportMediaTypes);
-  }
+    public SwaggerConfig(MappingJackson2HttpMessageConverter converter) {
+        List<MediaType> supportMediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
+        supportMediaTypes.add(new MediaType("application", "octet-stream"));
+        converter.setSupportedMediaTypes(supportMediaTypes);
+    }
 }

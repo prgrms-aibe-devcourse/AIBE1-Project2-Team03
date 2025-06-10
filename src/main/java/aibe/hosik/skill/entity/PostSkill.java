@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class PostSkill {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Skill skill;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Skill skill;
 }

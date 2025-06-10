@@ -2,7 +2,7 @@ package aibe.hosik.comment.dto;
 
 import aibe.hosik.comment.entity.Comment;
 import aibe.hosik.profile.dto.ProfileResponse;
-import aibe.hosik.user.User;
+import aibe.hosik.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

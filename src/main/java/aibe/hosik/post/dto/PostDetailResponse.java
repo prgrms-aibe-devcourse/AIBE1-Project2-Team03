@@ -28,22 +28,23 @@ public record PostDetailResponse(
 ) {
     public static PostDetailResponse from(Post post, List<String> skills, List<MatchedUserResponse> matchedUsers, int currentCount) {
         return new PostDetailResponse(
-            post.getId(),
-            post.getTitle(),
-            post.getContent(),
-            post.getHeadCount(),
-            post.getImage(),
-            post.getRequirementPersonality(),
-            post.getEndedAt(),
-            post.getCategory().toString(),
-            post.getType().toString(),
-            skills,
-            matchedUsers,
-            post.getApplies()
-                .stream()
-                .map(apply -> apply.getUser().getId()
-                ).toList(),
-            currentCount,
-            post.getUser().getId()
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getHeadCount(),
+                post.getImage(),
+                post.getRequirementPersonality(),
+                post.getEndedAt(),
+                post.getCategory().toString(),
+                post.getType().toString(),
+                skills,
+                matchedUsers,
+                post.getApplies()
+                        .stream()
+                        .map(apply -> apply.getUser().getId()
+                        ).toList(),
+                currentCount,
+                post.getUser().getId()
         );
-}}
+    }
+}

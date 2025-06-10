@@ -3,7 +3,7 @@ package aibe.hosik.post.dto;
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.entity.PostCategory;
 import aibe.hosik.post.entity.PostType;
-import aibe.hosik.user.User;
+import aibe.hosik.user.entity.User;
 
 import java.time.LocalDate;
 import java.util.List;
