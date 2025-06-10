@@ -1,15 +1,15 @@
 package aibe.hosik.comment.service;
 
-import aibe.hosik.comment.dto.CommentRequestDTO;
-import aibe.hosik.comment.dto.CommentResponseDTO;
+import aibe.hosik.comment.dto.CommentRequest;
+import aibe.hosik.comment.dto.CommentResponse;
 import aibe.hosik.user.User;
 
 import java.util.List;
 
 
 public interface CommentService {
-  void createComment(CommentRequestDTO dto, User user);
-  List<CommentResponseDTO> getCommentsByPostId(Long postId);
+  void createComment(CommentRequest dto, User user);
+  List<CommentResponse> getCommentsByPostId(Long postId);
   void deleteComment(Long commentId, User user);
-  void updateComment(Long commentId, CommentRequestDTO dto, User user);
+  void updateComment(Long commentId, CommentRequest dto, User user);
 }

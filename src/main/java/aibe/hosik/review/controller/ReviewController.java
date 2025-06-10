@@ -1,7 +1,10 @@
-package aibe.hosik.review;
+package aibe.hosik.review.controller;
 
+import aibe.hosik.handler.exception.CustomException;
+import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.review.dto.ReviewRequest;
 import aibe.hosik.review.dto.ReviewResponse;
+import aibe.hosik.review.service.ReviewService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,7 +37,7 @@ public class ReviewController {
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
 
@@ -50,7 +53,7 @@ public class ReviewController {
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     return ResponseEntity.ok(reviewService.getAllReviewsByUserId(userId));
@@ -66,7 +69,7 @@ public class ReviewController {
       @AuthenticationPrincipal User user
   ) {
     if (user == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.LOGIN_REQUIRED);
     }
 
     reviewService.updateReview(request, reviewId, user);

@@ -4,14 +4,14 @@ import aibe.hosik.analysis.entity.Analysis;
 import aibe.hosik.apply.entity.Apply;
 import aibe.hosik.apply.entity.PassStatus;
 import aibe.hosik.post.entity.Post;
-import aibe.hosik.profile.Profile;
+import aibe.hosik.profile.entity.Profile;
 import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ApplyDetailResponseDTO(
+public record ApplyDetailResponse(
         Long applyId,
 
         Long userId,
@@ -35,13 +35,13 @@ public record ApplyDetailResponseDTO(
         Integer aiScore,
         String aiReason
 ) {
-    public static ApplyDetailResponseDTO from(Apply apply, List<String> skills, Analysis analysis) {
+    public static ApplyDetailResponse from(Apply apply, List<String> skills, Analysis analysis) {
         User user = apply.getUser();
         Profile profile = user.getProfile();
         Resume resume = apply.getResume();
         Post post = apply.getPost();
 
-        return new ApplyDetailResponseDTO(
+        return new ApplyDetailResponse(
                 apply.getId(),
 
                 user.getId(),

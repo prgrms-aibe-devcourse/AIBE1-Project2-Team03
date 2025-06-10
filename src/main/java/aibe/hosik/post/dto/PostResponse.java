@@ -5,7 +5,7 @@ import aibe.hosik.post.entity.Post;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PostResponseDTO(
+public record PostResponse(
         Long id,
         String image,
         String title,
@@ -19,8 +19,8 @@ public record PostResponseDTO(
 
 ) {
 
-    public static PostResponseDTO from(Post post,List<String> skills, Integer currentCount) {
-        return new PostResponseDTO(post.getId(),
+    public static PostResponse from(Post post, List<String> skills, Integer currentCount) {
+        return new PostResponse(post.getId(),
                 post.getImage(),
                 post.getTitle(),
                 post.getContent(),

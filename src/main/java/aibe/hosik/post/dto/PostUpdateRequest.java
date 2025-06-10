@@ -6,7 +6,7 @@ import aibe.hosik.post.entity.PostType;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PostPatchDTO(
+public record PostUpdateRequest(
         String title,
         String content,
         Integer headCount,
