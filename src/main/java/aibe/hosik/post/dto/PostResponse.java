@@ -16,7 +16,6 @@ public record PostResponse(
         List<String> skills,
         Integer headCount,
         Integer currentCount
-
 ) {
 
     public static PostResponse from(Post post, List<String> skills, Integer currentCount) {
@@ -30,7 +29,6 @@ public record PostResponse(
                 skills,
                 post.getHeadCount(),
                 currentCount
-
         );
     }
 }

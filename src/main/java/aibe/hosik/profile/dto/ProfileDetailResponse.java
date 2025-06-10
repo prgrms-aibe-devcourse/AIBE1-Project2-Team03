@@ -7,19 +7,19 @@ import aibe.hosik.review.dto.ReviewResponse;
 import java.util.List;
 
 public record ProfileDetailResponse(
-    ProfileResponse profile,
-    List<PostResponse> authorPosts,
-    List<PostResponse> joinedPosts,
-    List<ReviewResponse> reviews,
-    List<ResumeDetailResponse> resumes
+        ProfileResponse profile,
+        List<PostResponse> authorPosts,
+        List<PostResponse> joinedPosts,
+        List<ReviewResponse> reviews,
+        List<ResumeDetailResponse> resumes
 ) {
-  public static ProfileDetailResponse from(
-      ProfileResponse profile,
-      List<PostResponse> authorPosts,
-      List<PostResponse> joinedPosts,
-      List<ReviewResponse> reviews,
-      List<ResumeDetailResponse> resumes
-  ) {
-    return new ProfileDetailResponse(profile, authorPosts, joinedPosts, reviews, resumes);
-  }
+    public static ProfileDetailResponse from(
+            ProfileResponse profile,
+            List<PostResponse> authorPosts,
+            List<PostResponse> joinedPosts,
+            List<ReviewResponse> reviews,
+            List<ResumeDetailResponse> resumes
+    ) {
+        return new ProfileDetailResponse(profile, authorPosts, joinedPosts, reviews, resumes);
+    }
 }

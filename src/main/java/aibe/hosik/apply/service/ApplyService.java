@@ -16,11 +16,10 @@ import aibe.hosik.resume.entity.Resume;
 import aibe.hosik.resume.repository.ResumeRepository;
 import aibe.hosik.skill.entity.ResumeSkill;
 import aibe.hosik.skill.repository.ResumeSkillRepository;
-import aibe.hosik.user.User;
-import aibe.hosik.user.UserRepository;
+import aibe.hosik.user.entity.User;
+import aibe.hosik.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,47 +31,48 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ApplyService {
 
-  private final ApplyRepository applyRepository; // Apply 테이블과 통신하는 레포
-  private final PostRepository postRepository; // Post 테이블과 통신
-  private final ResumeRepository resumeRepository; // Resume 테이블과 통신
-  private final UserRepository userRepository; // User 테이블과 통신
-  private final ResumeSkillRepository resumeSkillRepository;
-  private final AnalysisRepository analysisRepository;
-  private final AnalysisService analysisService;
+    private final ApplyRepository applyRepository; // Apply 테이블과 통신하는 레포
+    private final PostRepository postRepository; // Post 테이블과 통신
+    private final ResumeRepository resumeRepository; // Resume 테이블과 통신
+    private final UserRepository userRepository; // User 테이블과 통신
+    private final ResumeSkillRepository resumeSkillRepository;
+    private final AnalysisRepository analysisRepository;
+    private final AnalysisService analysisService;
 
 
-  /**
-   * 사용자가 특정 모집글에 특정 이력서를 가지고 지원하는 기능
-   * @param userId 지원자 ID
-   * @param postId 모집글 ID
-   * @param resumeId 지원자가 선택한 이력서 ID
-   */
-  public void apply(Long userId, Long postId, Long resumeId, String reason) {
-    Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+    /**
+     * 사용자가 특정 모집글에 특정 이력서를 가지고 지원하는 기능
+     *
+     * @param userId   지원자 ID
+     * @param postId   모집글 ID
+     * @param resumeId 지원자가 선택한 이력서 ID
+     */
+    public void apply(Long userId, Long postId, Long resumeId, String reason) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-    Resume resume = resumeRepository.findById(resumeId)
-            .orElseThrow(() -> new IllegalArgumentException("Resume not found"));
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new IllegalArgumentException("Resume not found"));
 
-    User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
 
-      if (!resume.getUser().getId().equals(userId)) {
-          throw new CustomException(ErrorCode.RESUME_FORBIDDEN);
-      }
+        if (!resume.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.RESUME_FORBIDDEN);
+        }
 
-    Apply apply = Apply.of(post, user, resume, reason);
-    applyRepository.save(apply);
+        Apply apply = Apply.of(post, user, resume, reason);
+        applyRepository.save(apply);
 
-      log.info("AI 분석 시작 - applyId: {}", apply.getId());
-      try {
-          analysisService.analysisApply(apply.getId());
+        log.info("AI 분석 시작 - applyId: {}", apply.getId());
+        try {
+            analysisService.analysisApply(apply.getId());
 
-      } catch (Exception e) {
-          log.error("AI 분석 중 오류 발생", e);
-      }
-  }
+        } catch (Exception e) {
+            log.error("AI 분석 중 오류 발생", e);
+        }
+    }
 
     /**
      * 지원서 모아보기
@@ -143,14 +143,14 @@ public class ApplyService {
     /**
      * 특정 지원서의 매칭 선택 여부를 업데이트하는 메서드.
      *
-     * @param applyId 선택 여부를 업데이트할 지원서의 ID
+     * @param applyId    선택 여부를 업데이트할 지원서의 ID
      * @param isselected 선택 여부 상태 (true: 선택됨, false: 선택되지 않음)
-     * @param user 현재 요청을 보낸 사용자 정보
+     * @param user       현재 요청을 보낸 사용자 정보
      * @throws ResponseStatusException 지원서가 존재하지 않거나, 모집글 작성자가 아닌 경우 예외 발생
      */
     public void updateIsSelected(Long applyId, boolean isselected, User user) {
         Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_APPLY));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_APPLY));
 
         Post post = apply.getPost();
 
@@ -164,19 +164,19 @@ public class ApplyService {
         apply.updateIsSelected(isselected);
         applyRepository.save(apply);
 
-        int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(),PassStatus.PASS);
+        int currentCount = applyRepository.countByPostIdAndIsSelected(post.getId(), PassStatus.PASS);
 
         // 매칭 선택 했을 때
-        if(previous.equals(PassStatus.FAIL) && isselected) {
-            if(currentCount >= post.getHeadCount()){
+        if (previous.equals(PassStatus.FAIL) && isselected) {
+            if (currentCount >= post.getHeadCount()) {
                 post.setDone(true);
                 postRepository.save(post);
             }
         }
 
         // 매칭 취소 시 다시 모집 중 전환
-        else if(previous.equals(PassStatus.PASS) && !isselected) {
-            if(post.isDone() && currentCount < post.getHeadCount()){
+        else if (previous.equals(PassStatus.PASS) && !isselected) {
+            if (post.isDone() && currentCount < post.getHeadCount()) {
                 post.setDone(false);
                 postRepository.save(post);
             }
@@ -184,16 +184,16 @@ public class ApplyService {
     }
 
 
-  /**
-   * 이력서 ID로 해당 이력서에 연결된 모든 스킬 이름을 조회하는 내부 메서드
-   *
-   * @param resumeId 이력서 ID
-   * @return 스킬 이름 목록
-   */
-  private List<String> getSkillsByResumeId(Long resumeId) {
-    List<ResumeSkill> resumeSkills = resumeSkillRepository.findByResumeId(resumeId);
-    return resumeSkills.stream()
-            .map(rs -> rs.getSkill().getName())
-            .collect(Collectors.toList());
-  }
+    /**
+     * 이력서 ID로 해당 이력서에 연결된 모든 스킬 이름을 조회하는 내부 메서드
+     *
+     * @param resumeId 이력서 ID
+     * @return 스킬 이름 목록
+     */
+    private List<String> getSkillsByResumeId(Long resumeId) {
+        List<ResumeSkill> resumeSkills = resumeSkillRepository.findByResumeId(resumeId);
+        return resumeSkills.stream()
+                .map(rs -> rs.getSkill().getName())
+                .collect(Collectors.toList());
+    }
 }

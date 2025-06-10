@@ -7,9 +7,8 @@ import aibe.hosik.auth.dto.SignUpRequest;
 import aibe.hosik.auth.dto.SocialLoginRequest;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.user.User;
-import aibe.hosik.user.UserService;
-
+import aibe.hosik.user.entity.User;
+import aibe.hosik.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

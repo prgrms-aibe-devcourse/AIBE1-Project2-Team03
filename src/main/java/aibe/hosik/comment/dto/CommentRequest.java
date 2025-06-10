@@ -2,7 +2,7 @@ package aibe.hosik.comment.dto;
 
 import aibe.hosik.comment.entity.Comment;
 import aibe.hosik.post.entity.Post;
-import aibe.hosik.user.User;
+import aibe.hosik.user.entity.User;
 
 // 댓글 작성 DTO
 public record CommentRequest(

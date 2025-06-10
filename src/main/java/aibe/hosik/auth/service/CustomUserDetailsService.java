@@ -2,9 +2,8 @@ package aibe.hosik.auth.service;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.user.User;
-import aibe.hosik.user.UserRepository;
-
+import aibe.hosik.user.entity.User;
+import aibe.hosik.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;

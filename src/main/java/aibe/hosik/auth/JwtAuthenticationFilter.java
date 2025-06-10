@@ -1,11 +1,9 @@
 package aibe.hosik.auth;
 
-import java.io.IOException;
-
 import aibe.hosik.auth.service.CustomUserDetailsService;
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
-import aibe.hosik.user.User;
+import aibe.hosik.user.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RequiredArgsConstructor
