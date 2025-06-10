@@ -1,9 +1,10 @@
-package aibe.hosik.review;
+package aibe.hosik.review.controller;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
 import aibe.hosik.review.dto.ReviewRequest;
 import aibe.hosik.review.dto.ReviewResponse;
+import aibe.hosik.review.service.ReviewService;
 import aibe.hosik.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

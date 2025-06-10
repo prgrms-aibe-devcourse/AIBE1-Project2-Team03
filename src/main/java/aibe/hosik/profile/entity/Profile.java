@@ -1,4 +1,4 @@
-package aibe.hosik.profile;
+package aibe.hosik.profile.entity;
 
 import aibe.hosik.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;

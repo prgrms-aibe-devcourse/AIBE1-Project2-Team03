@@ -1,4 +1,4 @@
-package aibe.hosik.review;
+package aibe.hosik.review.service;
 
 import aibe.hosik.handler.exception.CustomException;
 import aibe.hosik.handler.exception.ErrorCode;
@@ -6,6 +6,8 @@ import aibe.hosik.post.entity.Post;
 import aibe.hosik.post.repository.PostRepository;
 import aibe.hosik.review.dto.ReviewRequest;
 import aibe.hosik.review.dto.ReviewResponse;
+import aibe.hosik.review.entity.Review;
+import aibe.hosik.review.repository.ReviewRepository;
 import aibe.hosik.user.User;
 import aibe.hosik.user.UserRepository;
 import lombok.RequiredArgsConstructor;

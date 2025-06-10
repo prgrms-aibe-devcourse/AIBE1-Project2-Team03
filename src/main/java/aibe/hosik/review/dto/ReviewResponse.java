@@ -2,7 +2,7 @@ package aibe.hosik.review.dto;
 
 import aibe.hosik.post.entity.Post;
 import aibe.hosik.profile.dto.ProfileResponse;
-import aibe.hosik.review.Review;
+import aibe.hosik.review.entity.Review;
 
 public record ReviewResponse(
     Long id,
